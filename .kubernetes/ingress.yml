@@ -1,0 +1,19 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: infra-map-ingress
+  namespace: ${NAMESPACE}
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: infra.kazan.schleppe.cloud
+      http:
+        paths:
+          - backend:
+              service:
+                name: infra-map-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
