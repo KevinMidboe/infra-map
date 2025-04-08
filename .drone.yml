@@ -125,3 +125,8 @@ depends_on:
 volumes:
   - name: kube-config
     temp: {}
+---
+kind: signature
+hmac: bea117f5e4b51c4fc215ae86962a8cfb24993d9e9b7db3498ab5940b10c70d69
+
+...
