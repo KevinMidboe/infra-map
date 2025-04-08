@@ -6,7 +6,7 @@ metadata:
   labels:
     app: infra-map
   name: infra-map
-  namespace: infra-map
+  namespace: ${NAMESPACE}
 spec:
   replicas: 2
   selector:
@@ -18,7 +18,7 @@ spec:
         app: infra-map
     spec:
       containers:
-        - image: ghcr.io/kevinmidboe/infra-map:282a33eedd3d93e2df508fe0153c81e65454ea13
+        - image: ${IMAGE}
           imagePullPolicy: IfNotPresent
           name: infra-map
           env:
