@@ -15,7 +15,7 @@ WORKDIR /opt/infra-map
 COPY --from=builder /app/build build
 
 COPY package.json .
-RUN yarn
+RUN yarn --production
 
 EXPOSE 3000
 ENV NODE_ENV=production
