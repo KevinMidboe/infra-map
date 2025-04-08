@@ -3,31 +3,57 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    deployment.kubernetes.io/revision: '1'
   labels:
     app: infra-map
   name: infra-map
-  namespace: ${NAMESPACE}
+  namespace: infra-map
 spec:
-  progressDeadlineSeconds: 600
   replicas: 2
-  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: infra-map
-  strategy:
-    type: RollingUpdate
   template:
     metadata:
       labels:
         app: infra-map
     spec:
       containers:
-        - image: ${IMAGE}
+        - image: ghcr.io/kevinmidboe/infra-map:282a33eedd3d93e2df508fe0153c81e65454ea13
           imagePullPolicy: IfNotPresent
           name: infra-map
-          envFrom:
-            - secretRef:
+          env:
+          - name: HOMEASSISTANT_TOKEN
+            valueFrom:
+              secretKeyRef:
                 name: secret-env-values
-          imagePullPolicy: IfNotPresent
+                key: HOMEASSISTANT_TOKEN
+          - name: HOMEASSISTANT_URL
+            valueFrom:
+              secretKeyRef:
+                name: secret-env-values
+                key: HOMEASSISTANT_URL
+          - name: PROXMOX_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: secret-env-values
+                key: PROXMOX_TOKEN
+          - name: PROXMOX_URL
+            valueFrom:
+              secretKeyRef:
+                name: secret-env-values
+                key: PROXMOX_URL
+          - name: TRAEFIK_URL
+            valueFrom:
+              secretKeyRef:
+                name: secret-env-values
+                key: TRAEFIK_URL
+          resources:
+            limits:
+              cpu: 900m
+              memory: 828Mi
+            requests:
+              cpu: 250m
+              memory: 64Mi
       restartPolicy: Always
+      imagePullSecrets:
+        - name: ghcr-login-secret
