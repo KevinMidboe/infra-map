@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY src/ src
 COPY static/ static
-COPY package.json yarn.lock svelte.config.js tsconfig.json vite.config.ts .
+COPY package.json yarn.lock svelte.config.js tsconfig.json vite.config.ts ./
 
 RUN yarn
 RUN yarn build
