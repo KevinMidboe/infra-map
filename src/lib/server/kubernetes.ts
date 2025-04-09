@@ -2,14 +2,8 @@ import * as k8s from '@kubernetes/client-node';
 import stream from 'stream';
 import { writable } from 'svelte/store';
 
-const context = {
-	name: 'kazan-insecure',
-	user: 'admin',
-	cluster: 'kazan-insecure'
-};
-
 const kc = new k8s.KubeConfig();
-kc.loadFromDefault({ contexts: [context] });
+kc.loadFromDefault();
 
 const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 const appsV1Api = kc.makeApiClient(k8s.AppsV1Api);
