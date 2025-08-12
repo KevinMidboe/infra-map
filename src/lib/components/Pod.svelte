@@ -3,6 +3,7 @@
 	import Network from '$lib/icons/network.svelte';
 	import Layers from '$lib/icons/layers.svelte';
 	import Clock from '$lib/icons/clock.svelte';
+	import Sync from '$lib/icons/sync.svelte';
 	import { formatDuration } from '$lib/utils/conversion';
 
 	import { onMount } from 'svelte';
@@ -66,6 +67,12 @@
 			<span>Instances</span>
 		</div>
 		<span>{i + 1} of {replicas}</span>
+
+		<div class="title">
+			<Sync />
+			<span>Restarts</span>
+		</div>
+		<span>{status?.containerStatuses?.[0].restartCount}</span>
 
 		<div class="title">
 			<Connection />

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import Table from '$lib/components/Table.svelte';
@@ -7,22 +8,11 @@
 	let { data }: { data: PageData } = $props();
 
 	const { routers } = data;
-	const columns = {
-		entryPoints: 'Entrypoints',
-		name: 'Name',
-		provider: 'Provider',
-		rule: 'Rule',
-		service: 'Service',
-		status: 'Status'
-	};
-	const links: string[] = routers.map((router) => `/network/${router.service}`);
-
 	const providers = [
 		...new Set(
 			routers.map((item) => item.provider).filter((provider) => typeof provider === 'string')
 		)
 	];
-	console.log(routers);
 </script>
 
 <PageHeader>Network</PageHeader>
@@ -42,7 +32,24 @@
 		</div>
 	</Section>
 
-	<Table title="Routers" description="Traefik routers available" {columns} data={routers} {links} />
+	<Table
+		title="Routers"
+		description="Traefik routers available"
+		columns={['Entrypoints', 'Name', 'Provider', 'Rule', 'Service', 'Status']}
+	>
+		<tbody slot="tbody">
+			{#each routers as route (route)}
+				<tr on:click={() => goto(`/network/${route.service}`)} class="link">
+					<td>{route.entryPoints}</td>
+					<td>{route.name}</td>
+					<td>{route.provider}</td>
+					<td>{route.rule}</td>
+					<td>{route.service}</td>
+					<td>{route.status}</td>
+				</tr>
+			{/each}
+		</tbody>
+	</Table>
 </div>
 
 <style lang="scss">

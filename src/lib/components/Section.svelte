@@ -5,7 +5,10 @@
 
 <article class="main-container">
 	<div class="header">
-		<h2>{title}</h2>
+		<div class="title">
+			<h2>{title}</h2>
+			<slot name="top-left" />
+		</div>
 		<label>{description}</label>
 	</div>
 
@@ -25,5 +28,10 @@
 	.header {
 		display: flex;
 		flex-direction: column;
+
+		.title {
+			display: flex;
+			justify-content: space-between;
+		}
 	}
 </style>

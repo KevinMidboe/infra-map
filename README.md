@@ -1,18 +1,60 @@
-# sv
+# infra-map
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Configuration setup
 
-## Creating a project
+set the following env variables during runtime or update `.env` file.
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Kubernetes
+
+Required parameters:
 
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+KUBERNETES_SERVICE_HOST=https://IP_ADDRESS:16443
+KUBERNETES_CA_CART_PATH=kube-ca.crt
+KUBERNETES_SA_TOKEN=LKdgk34l...
 ```
+
+The `KUBERNETES_SERVICE_HOST` is the api server, [microk8s documentation](https://microk8s.io/docs/services-and-ports#services-binding-to-the-default-host-interface) describes that API server is running at port `16443`. Runtime in a pod this will be set by kubernetes.
+
+Get ca_cert from the any running pod at: `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`.
+
+### Proxmox
+
+Required parameters:
+
+```bash
+PROXMOX_URL=https://apollo.schleppe:8086/api2/json/
+PROXMOX_TOKEN=PVEAPITOKEN=USER@pve!USER=TOKEN_VALUE
+```
+
+`PROXMOX_TOKEN` should contain the sub-variable `PVEAPITOKEN` that describes a proxmox API token.
+
+Create api token:
+
+- Create Users
+  - user name: infra-map
+  - realm: pve
+  - expire: never
+- Add API tokens
+  - user: infra-map@pve
+  - token ID: infra-map
+- Permissions
+  - add: API Token permissions
+  - path: /
+  - api-token: infra-map@pve!infra-map
+  - role: Administrator
+  - propagate: true
+
+## Home Assistant
+
+Required parameters:
+
+```bash
+HOMEASSISTANT_URL=http://homeassistant.schleppe:8123/api/states
+HOMEASSISTANT_TOKEN=
+```
+
+Follow hass documentation on generating a api token: https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token.
 
 ## Developing
 

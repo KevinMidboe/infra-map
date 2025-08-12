@@ -11,10 +11,21 @@
 	import { formatBytes, formatDuration } from '$lib/utils/conversion';
 	import type { Node } from '$lib/interfaces/proxmox';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import Speed from '$lib/icons/speed.svelte';
+	import Fingerprint from '$lib/icons/fingerprint.svelte';
 
 	export let node: Node;
 
-	const buttons = ['View logs', 'Web terminal', 'graphs'];
+	const buttons = [
+		{ name: 'View logs', link: `https://${node.ip}:8006/#v1:0:=node%2F${node.name}:4:25::::::` },
+		{
+			name: 'Terminal',
+			link: `https://${node.ip}:8006/#v1:0:=node%2F${node.name}:4:=jsconsole::::::`
+		},
+		{ name: 'Graphs', link: `https://${node.ip}:8006/#v1:0:=node%2F${node.name}:4:5::::::` },
+		{ name: 'Web', link: `https://${node.ip}:8006/` }
+	];
 
 	let { cpuinfo, memory, uptime, loadavg } = node.info;
 
@@ -22,6 +33,9 @@
 	const vmsTotal = node.vms.filter((v) => v?.template !== 1);
 	const lxcsRunning = node.lxcs.filter((l) => l?.template !== 1 && l.status === 'running');
 	const lxcsTotal = node.lxcs.filter((l) => l?.template !== 1);
+
+	const t = cpuinfo.model.match(/(\w+\(\w+\)) (\w+\(\w+\)) (.*)/);
+	const cpu = t[3].replaceAll('  ', ' ');
 
 	onMount(() => {
 		setInterval(() => (uptime += 1), 1000);
@@ -50,6 +64,18 @@
 		<span
 			>{cpuinfo.cpus} Cores on {cpuinfo.sockets} {cpuinfo.sockets > 1 ? 'Sockets' : 'Socket'}</span
 		>
+
+		<div class="title">
+			<Fingerprint />
+			<span>Model</span>
+		</div>
+		<span>{cpu}</span>
+
+		<div class="title">
+			<Speed />
+			<span>Turbo speed</span>
+		</div>
+		<span>{Math.floor(node.info.cpuinfo.mhz) / 1000} GHz</span>
 
 		<div class="title">
 			<Shield />
@@ -90,9 +116,11 @@
 
 	<div class="footer">
 		{#each buttons as btn (btn)}
-			<button on:click={() => console.log(node)}>
-				<span>{btn}</span>
-			</button>
+			<a href={btn.link} target="_blank" rel="noopener noreferrer">
+				<button>
+					<span>{btn.name}</span>
+				</button>
+			</a>
 		{/each}
 	</div>
 </div>
@@ -186,7 +214,7 @@
 		background-color: var(--bg);
 
 		row-gap: 6px;
-		column-gap: 20px;
+		max-width: 330px;
 
 		> div,
 		span {
@@ -203,6 +231,7 @@
 	.footer {
 		display: flex;
 		align-items: center;
+		justify-content: space-evenly;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 

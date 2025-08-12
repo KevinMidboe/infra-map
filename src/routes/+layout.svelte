@@ -30,8 +30,19 @@
 
 		main {
 			/* mobile: 1rem */
-			margin: 2rem;
-			width: 100%;
+			--margin: 2rem;
+			margin: var(--margin);
+			width: calc(100% - var(--margin) * 2);
+		}
+
+		@media screen and (max-width: 750px) {
+			main {
+				--margin: 1rem;
+			}
+
+			:global(> .nav-wrapper) {
+				display: none;
+			}
 		}
 	}
 </style>

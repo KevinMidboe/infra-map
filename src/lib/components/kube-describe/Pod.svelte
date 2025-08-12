@@ -1,39 +1,33 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+	import { writable } from 'svelte/store';
 	import { browser } from '$app/environment';
-	import type { PageData } from './$types';
-	import type { V1Pod } from '@kubernetes/client-node';
+	import { formatDuration } from '$lib/utils/conversion';
 	import Tab from '$lib/components/navigation/Tab.svelte';
 	import Tabs from '$lib/components/navigation/Tabs.svelte';
 	import TabList from '$lib/components/navigation/TabList.svelte';
 	import TabView from '$lib/components/navigation/TabView.svelte';
-	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Section from '$lib/components/Section.svelte';
-	import { formatDuration } from '$lib/utils/conversion';
-	import { onMount, onDestroy } from 'svelte';
-	import { writable } from 'svelte/store';
 	import Logs from '$lib/components/Logs.svelte';
+	import JsonViewer from '$lib/components/JsonViewer.svelte';
 	import { source } from 'sveltekit-sse';
+	import type { V1Pod } from '@kubernetes/client-node';
+
+	const { pod }: { pod: V1Pod } = $props();
+	const { status, metadata, spec } = pod || {};
 
 	let value = 'no data :(';
-	if (browser) {
-		console.log('setting up sse', window.location.pathname);
-		value = source(window.location.pathname + '/logs').select('message');
-		console.log(value);
-	}
-
-	let { data }: { data: PageData } = $props();
-	const { pod }: { pod: V1Pod | undefined } = data;
-	const { status, metadata, spec } = pod || {};
-	// console.log(pod);
 
 	let uptime = writable(new Date().getTime() - new Date(status?.startTime || 0).getTime());
 
 	let logs = writable([]);
 	let eventSource: EventSource;
 
+	const parentUrl = `/cluster/${metadata?.ownerReferences?.[0].kind.toLowerCase()}/${metadata?.ownerReferences?.[0].uid}`;
+
 	function setupWS() {
 		const url = new URL(`${window.location.origin}/cluster/pod/${pod?.metadata?.uid}/logs`);
-		if (pod?.metadata) {
+		if (pod?.metadata === undefined) {
 			console.error('missing pod info. not enough metadata to setup WS connection.');
 			return;
 		}
@@ -54,7 +48,13 @@
 
 	onMount(() => {
 		setInterval(() => uptime.update((n) => n + 1000), 1000);
-		return setupWS();
+
+		if (browser) {
+			console.log('setting up sse', window.location.pathname);
+			value = source(window.location.pathname + '/logs').select('message');
+			console.log(value);
+			return setupWS();
+		}
 	});
 
 	onDestroy(() => {
@@ -65,13 +65,13 @@
 	});
 </script>
 
-<PageHeader>Pod: {pod?.metadata?.name}</PageHeader>
-
 <Tabs>
 	<TabList>
 		<Tab>Details</Tab>
 		<Tab>Logs</Tab>
 		<Tab>Metadata</Tab>
+		<Tab>Spec</Tab>
+		<Tab>Status</Tab>
 		<Tab>Deployment logs</Tab>
 	</TabList>
 
@@ -108,9 +108,11 @@
 						<span>{metadata?.namespace}</span>
 					</div>
 
-					<div class="section-element">
-						<label>Parent resource</label>
-						<span>{metadata?.ownerReferences?.[0].kind}</span>
+					<div class="section-element" data-sveltekit-preload-data="false">
+						<label>Parent pod</label>
+						<a href={parentUrl} sveltekit:reload
+							><span>{metadata?.ownerReferences?.[0].kind}</span></a
+						>
 					</div>
 				</div>
 			</Section>
@@ -156,10 +158,18 @@
 	</TabView>
 
 	<TabView>
-		<Logs logs={JSON.stringify(metadata, null, 2).split('\n')} lineNumbers={false} />
+		<JsonViewer json={pod.metadata} lineNumbers={false} />
 	</TabView>
 
 	<TabView>
-		<Logs lineNumbers={false} />
+		<JsonViewer json={pod.spec} lineNumbers={false} />
+	</TabView>
+
+	<TabView>
+		<JsonViewer json={pod.status} lineNumbers={false} />
+	</TabView>
+
+	<TabView>
+		<Logs logs="" lineNumbers={false} />
 	</TabView>
 </Tabs>

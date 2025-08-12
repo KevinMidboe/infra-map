@@ -1,7 +1,29 @@
 @font-face {
+	font-family: 'Reckless Neue';
+	font-style: normal;
+	src: url('/fonts/RecklessNeue-Regular.woff2') format('woff2');
+}
+
+@font-face {
 	font-family: 'Inter';
 	font-style: normal;
 	src: url('/fonts/Inter.woff2') format('woff2');
+	font-weight: 100 900;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Stop';
+	font-style: normal;
+	src: url('/fonts/StopSN-Display.woff2') format('woff2');
+	font-weight: 100 900;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Norman';
+	font-style: normal;
+	src: url('/fonts/NormanVariable-Regular.woff2') format('woff2');
 	font-weight: 100 900;
 	font-style: normal;
 }
@@ -37,7 +59,10 @@ a:visited {
 }
 
 h1 {
-	font-family: 'Reckless Neue';
+	font-family: 'Stop', 'Reckless Neue';
+	font-family: 'Norman', 'Reckless Neue';
+	letter-spacing: 2.2px;
+	font-weight: bold !important;
 }
 
 h2 {
@@ -69,27 +94,43 @@ button {
 	border: none;
 	position: relative;
 	background: transparent;
-	height: unset;
+	height: 100%;
 	border-radius: 0.5rem;
 	display: inline-block;
 	text-decoration: none;
+	cursor: pointer;
 	padding: 0 0.5rem;
 	flex: 1;
 }
+
 button span {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	height: 1.5rem;
+	height: 100%;
+	min-height: 1.5rem;
 	padding: 0 0.5rem;
 	margin-left: -0.5rem;
 	border: 1px solid #eaddd5;
 	border-radius: inherit;
 	white-space: nowrap;
-	cursor: pointer;
 	font-weight: 700;
 	transition: all ease-in-out 0.2s;
+	background-color: white;
+}
+
+button.affirmative span {
+	background-color: #1c1819;
+	color: white;
+}
+
+button.affirmative:hover span {
+	background-color: #363132;
+}
+
+button:disabled {
+	cursor: not-allowed;
 }
 
 button::after {
@@ -107,7 +148,49 @@ button::after {
 
 button:hover span {
 	border-color: #cab2aa;
-	background: #f9f5f3 !important;
+	background: #f9f5f3;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-family: sans-serif;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+table th,
+table td {
+	padding: 12px;
+	text-align: left;
+	transition: background-color 0.25s;
+}
+
+table th {
+	font-weight: 500;
+	font-family: 'Inter', sans-serif;
+	font-size: 14px;
+	font-stretch: 2px;
+	border-bottom: 1px solid #eaddd5;
+}
+
+table td {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	display: table-cell;
+}
+
+table tr:not(table tr:last-of-type) {
+	border-bottom: 1px solid #eaddd5;
+}
+
+table tr:hover > td {
+	background-color: var(--highlight);
+	background-color: #f5ede9;
+}
+
+table tr.link {
+	cursor: pointer;
 }
 
 .main-container {
@@ -126,7 +209,9 @@ button:hover span {
 
 .section-row {
 	display: flex;
-	gap: 2rem;
+	flex-wrap: wrap;
+	column-gap: 2rem;
+	row-gap: 1rem;
 }
 
 .section-element {

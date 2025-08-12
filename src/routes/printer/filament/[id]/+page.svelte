@@ -6,11 +6,11 @@
 	const filament = data?.filament;
 </script>
 
-{#if filament !== null}
-	<PageHeader>Filament: {filament?.Color}</PageHeader>
+{#if filament != null}
+	<PageHeader>Filament: {filament?.color}</PageHeader>
 
 	<div class="page">
-		<div class="color-block" style={`background: ${filament?.Hex}`}></div>
+		<div class="color-block" style={`background: ${filament?.hex}`}></div>
 	</div>
 {:else}
 	<PageHeader>Filament not found!</PageHeader>

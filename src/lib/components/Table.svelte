@@ -1,5 +1,9 @@
 <script lang="ts">
+	import Dialog from './Dialog.svelte';
 	import { goto } from '$app/navigation';
+	import Certificate from '$lib/icons/certificate.svelte';
+	import { daysUntil } from '$lib/utils/conversion';
+	import JsonViewer from './JsonViewer.svelte';
 
 	export let title = '';
 	export let description = '';
@@ -22,7 +26,7 @@
 		<div class="description">{description}</div>
 	</div>
 	<div class="actions">
-		<slot></slot>
+		<slot name="actions"></slot>
 	</div>
 	<table>
 		<thead>
@@ -38,23 +42,8 @@
 				{/if}
 			</tr>
 		</thead>
-		<tbody>
-			{#each data as row, i (row)}
-				<tr on:click={() => hasLinks && goto(links[i])} class={hasLinks ? 'link' : ''}>
-					{#each columns as column (column)}
-						{#if column === 'Link'}
-							<td><a href={row[column]}>Link</a></td>
-						{:else if column === 'Hex'}
-							<td><span class="color" style={`background: ${row[column]}`} /></td>
-						{:else if Array.isArray(row[column])}
-							<td>{row[column].join(', ')}</td>
-						{:else}
-							<td>{row[column]}</td>
-						{/if}
-					{/each}
-				</tr>
-			{/each}
-		</tbody>
+
+		<slot name="tbody"></slot>
 	</table>
 
 	{#if footer?.length}
@@ -75,59 +64,6 @@
 
 	.actions {
 		margin-bottom: 12px;
-	}
-
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-family: sans-serif;
-		border-radius: 8px;
-		overflow: hidden;
-	}
-
-	th,
-	td {
-		padding: 12px;
-		text-align: left;
-		transition: background-color 0.25s;
-	}
-
-	th {
-		font-weight: 500;
-		font-family: 'Inter', sans-serif;
-		font-size: 14px;
-		font-stretch: 2px;
-		border-bottom: 1px solid #eaddd5;
-	}
-
-	tr {
-		&:not(&:last-of-type) {
-			border-bottom: 1px solid #eaddd5;
-		}
-
-		&:hover > td {
-			background-color: var(--highlight);
-			background-color: #f5ede9;
-		}
-
-		&.link {
-			cursor: pointer;
-		}
-	}
-
-	td {
-		padding-top: 2rem;
-		padding-bottom: 2rem;
-	}
-
-	.color {
-		--size: 2rem;
-		display: block;
-		width: calc(var(--size) * 2);
-		height: var(--size);
-		margin-top: -calc(var(--size / 2));
-		margin-bottom: -calc(var(--size / 2));
-		border-radius: var(--border-radius, 1rem);
 	}
 
 	footer {

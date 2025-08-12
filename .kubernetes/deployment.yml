@@ -21,32 +21,9 @@ spec:
         - image: ${IMAGE}
           imagePullPolicy: IfNotPresent
           name: infra-map
-          env:
-          - name: HOMEASSISTANT_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: secret-env-values
-                key: HOMEASSISTANT_TOKEN
-          - name: HOMEASSISTANT_URL
-            valueFrom:
-              secretKeyRef:
-                name: secret-env-values
-                key: HOMEASSISTANT_URL
-          - name: PROXMOX_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: secret-env-values
-                key: PROXMOX_TOKEN
-          - name: PROXMOX_URL
-            valueFrom:
-              secretKeyRef:
-                name: secret-env-values
-                key: PROXMOX_URL
-          - name: TRAEFIK_URL
-            valueFrom:
-              secretKeyRef:
-                name: secret-env-values
-                key: TRAEFIK_URL
+          envFrom:
+            - secretRef:
+              name: secret-env-values
           resources:
             limits:
               cpu: 900m

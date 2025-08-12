@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import User from '$lib/icons/user.svelte';
 	import { derived } from 'svelte/store';
 
 	// Create a derived store to extract breadcrumb data
@@ -40,6 +41,7 @@
 
 	<div class="right">
 		<span>User profile</span>
+		<User />
 	</div>
 </div>
 
@@ -111,5 +113,11 @@
 				padding: 0 0.75rem;
 			}
 		}
+	}
+
+	:global(.right svg) {
+		height: 1.5rem;
+		width: 1.5rem;
+		fill: white;
 	}
 </style>

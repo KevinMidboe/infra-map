@@ -3,7 +3,7 @@ import { env } from '$env/dynamic/private';
 const TRAEFIK_HTTP_URL = '/api/http';
 
 function buildTraefikRequest(path: string) {
-	const baseURL = env.TRAEFIK_URL || 'http://localhost:9000';
+	const baseURL = env.TRAEFIK_URL;
 	const url = `${baseURL}${TRAEFIK_HTTP_URL}/${path}`;
 	const options = {
 		method: 'GET',
@@ -12,6 +12,7 @@ function buildTraefikRequest(path: string) {
 		}
 	};
 
+	console.log('making traefik request', url);
 	return { url, options };
 }
 

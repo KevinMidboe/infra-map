@@ -59,8 +59,12 @@
 		min-width: var(--nav-width);
 		margin-right: 1rem;
 
-		@media screen and (max-width: 700px) {
-			--nav-width: 100px;
+		@media screen and (max-width: 1460px) {
+			--nav-width: 220px;
+			margin-left: 0.5rem;
+		}
+		@media screen and (max-width: 1200px) {
+			--nav-width: 140px;
 			margin-left: 0.5rem;
 			margin-right: 0;
 		}
