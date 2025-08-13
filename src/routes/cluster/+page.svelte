@@ -81,13 +81,16 @@
 
 	.server-list {
 		display: grid;
-		--grid-tmpl-cols: repeat(2, 1fr);
+		--grid-tmpl-cols: repeat(1, 1fr);
 		--grid-gap: 0.5rem;
 		grid-template-columns: var(--grid-tmpl-cols, repeat(2, 1fr));
 		gap: var(--grid-gap, 0.5rem);
 
 		margin-bottom: 2rem;
 
+		@media screen and (min-width: 480px) {
+			--grid-tmpl-cols: repeat(2, 1fr);
+		}
 		@media screen and (min-width: 750px) {
 			--grid-tmpl-cols: repeat(2, 1fr);
 			--grid-gap: 1.25rem;

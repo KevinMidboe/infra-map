@@ -37,17 +37,10 @@
 
 		@media screen and (max-width: 750px) {
 			padding-top: 0;
-		}
-		/*
-		@media screen and (max-width: 750px) {
+
 			main {
 				--margin: 1rem;
 			}
-
-			:global(> .nav-wrapper) {
-				display: none;
-			}
 		}
-		*/
 	}
 </style>

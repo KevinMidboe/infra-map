@@ -104,7 +104,9 @@
 			link={site.link}
 		/>
 	{/each}
+</div>
 
+<div class="section-wrapper full-width">
 	<Section
 		title="Expose HTTP traffic"
 		description="You can reach your Application on a specific Port you configure, redirecting all your domains to it. You can make it Private by disabling HTTP traffic."
@@ -137,6 +139,14 @@
 
 		@media screen and (max-width: 750px) {
 			grid-template-columns: repeat(2, 1fr);
+
+			&.full-width {
+				grid-template-columns: repeat(1, 1fr);
+			}
+		}
+
+		&:not(:first-of-type) {
+			margin-top: 4rem;
 		}
 	}
 </style>

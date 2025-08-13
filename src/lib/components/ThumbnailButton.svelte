@@ -107,6 +107,17 @@
 			opacity: 0;
 		}
 
+		@media screen and (max-width: 750px) {
+			.title h2 {
+				padding: 0.6rem;
+				font-size: 1.2rem;
+			}
+
+			.image {
+				height: 5rem;
+			}
+		}
+
 		&:hover {
 			transform: translateY(-4px) translateX(-4px);
 			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
