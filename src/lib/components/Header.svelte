@@ -27,8 +27,10 @@
 
 <div class="header">
 	<div class="left">
-		<!-- <img src="/logo.png" /> -->
-		<h1>schleppe.cloud</h1>
+		<a href="/">
+			<!-- <img src="/logo.png" /> -->
+			<h1>schleppe.cloud</h1>
+		</a>
 	</div>
 
 	<div class="middle crumbs">
@@ -40,7 +42,6 @@
 	</div>
 
 	<div class="right">
-		<span>User profile</span>
 		<User />
 	</div>
 </div>
@@ -52,7 +53,7 @@
 		left: 0;
 
 		display: grid;
-		grid-template-columns: 240px 1fr auto;
+		grid-template-columns: 200px 1fr auto;
 		grid-template-areas: 'logoSection siteAndEnvironment profileAndHelp';
 		align-items: center;
 		background: #1c1819;
@@ -64,7 +65,7 @@
 		font-size: 1rem;
 		z-index: 100;
 
-		&::after {
+		&::before {
 			content: '';
 			position: absolute;
 			width: 100%;
@@ -102,15 +103,25 @@
 		}
 
 		.crumbs {
-			margin-left: 0.6rem;
+			margin-left: 2rem;
 
 			li {
 				display: block;
+				cursor: pointer;
 			}
 
 			.seperator {
 				color: #7d6665;
 				padding: 0 0.75rem;
+			}
+		}
+
+		@media screen and (max-width: 750px) {
+			top: -0.25rem;
+			overflow: scroll;
+
+			.crumbs {
+				margin-left: 0;
 			}
 		}
 	}
