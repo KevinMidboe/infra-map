@@ -36,6 +36,10 @@
 		}
 
 		@media screen and (max-width: 750px) {
+			padding-top: 0;
+		}
+		/*
+		@media screen and (max-width: 750px) {
 			main {
 				--margin: 1rem;
 			}
@@ -44,5 +48,6 @@
 				display: none;
 			}
 		}
+		*/
 	}
 </style>

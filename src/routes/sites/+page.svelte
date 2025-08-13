@@ -14,34 +14,80 @@
 	const sites: Array<Site> = [
 		{
 			title: 'Grafana',
-			image:
-				'https://www.stackhero.io/assets/src/images/servicesLogos/openGraphVersions/grafana.png',
+			image: '/images/grafana.png',
 			link: 'https://grafana.schleppe.cloud',
-			background: '#082448',
-			color: 'white'
+			background: '#F5E3DC',
+			color: '#F05A24'
 		},
 		{
 			title: 'Prometheus',
-			image: 'https://prometheus.io/_next/static/media/prometheus-logo.7aa022e5.svg',
-			link: 'http://prome.schleppe:9090'
+			image: '/images/prometheus.svg',
+			link: 'http://prome.schleppe:9090',
+			background: '#262221',
+			color: '#F3BFA2'
 		},
 		{
 			title: 'Traefik',
-			image: 'https://storage.googleapis.com/schleppe-files/Traefik.logo_shape_bordered.png',
+			image: '/images/traefik.png',
 			link: 'https://grafana.schleppe.cloud',
 			background: '#30A4C2',
-			color: '#343A40'
+			color: 'white'
 		},
 		{
 			title: 'Kibana',
-			image: 'https://marketplace-assets.digitalocean.com/logos/sharklabs-kibana.svg',
-			link: 'https://kibana.schleppe.cloud'
+			image: '/images/kibana.svg',
+			link: 'https://kibana.schleppe.cloud',
+			background: '#f6cfdd',
+			color: '#401C26'
 		},
 		{
 			title: 'HASS',
-			image:
-				'https://upload.wikimedia.org/wikipedia/en/thumb/4/49/Home_Assistant_logo_%282023%29.svg/2048px-Home_Assistant_logo_%282023%29.svg.png',
-			link: 'http://homeassistant.schleppe:8123'
+			image: '/images/hass.png',
+			link: 'http://homeassistant.schleppe:8123',
+			background: '#1ABCF2',
+			color: 'white'
+		},
+		{
+			title: 'Vault',
+			image: '/images/vault.svg',
+			link: 'http://vault.schleppe:8200',
+			background: 'white',
+			color: 'black'
+		},
+		{
+			title: 'Drone',
+			image: '/images/drone.png',
+			link: 'https://drone.schleppe.cloud',
+			background: '#D8E2F0',
+			color: '#1E375A'
+		},
+		{
+			title: 'Immich',
+			image: '/images/immich.png',
+			link: 'http://immich.schleppe:2283',
+			background: 'white',
+			color: 'black'
+		},
+		{
+			title: 'Wiki',
+			image: '/images/xwiki.png',
+			link: 'https://wiki.schleppe.cloud',
+			background: 'white',
+			color: 'black'
+		},
+		{
+			title: 'Gitea',
+			image: '/images/gitea.png',
+			link: 'https://git.schleppe.cloud',
+			background: '#E6E7D7',
+			color: '#609925'
+		},
+		{
+			title: 'PBS',
+			image: '/images/proxmox.png',
+			link: 'https://clio.schleppe:8007',
+			background: '#EDE1D2',
+			color: '#E66B00'
 		}
 	];
 </script>
@@ -84,5 +130,13 @@
 	.section-wrapper {
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
+
+		@media screen and (max-width: 1000px) {
+			grid-template-columns: repeat(3, 1fr);
+		}
+
+		@media screen and (max-width: 750px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
 	}
 </style>
