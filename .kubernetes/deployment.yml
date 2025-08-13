@@ -23,7 +23,7 @@ spec:
           name: infra-map
           envFrom:
             - secretRef:
-              name: secret-env-values
+                name: secret-env-values
           resources:
             limits:
               cpu: 900m
