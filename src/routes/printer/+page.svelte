@@ -344,7 +344,7 @@
 				margin-bottom: 0.45em;
 				font-size: 1.1rem;
 				font-weight: 300;
-				color: #1c1b1b;
+				color: var(--theme);
 			}
 
 			.meta {

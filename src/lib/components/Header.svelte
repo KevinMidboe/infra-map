@@ -56,7 +56,7 @@
 		grid-template-columns: 200px 1fr auto;
 		grid-template-areas: 'logoSection siteAndEnvironment profileAndHelp';
 		align-items: center;
-		background: #1c1819;
+		background: var(--theme);
 		padding: 0 1rem;
 		border-radius: 6px;
 		color: white;
@@ -79,6 +79,7 @@
 			font-size: 1.5rem;
 			padding: 0;
 			font-weight: 300;
+			color: white !important;
 		}
 
 		img {

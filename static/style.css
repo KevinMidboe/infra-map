@@ -32,6 +32,7 @@
 	--bg: #f9f5f3;
 	--color: #1c1819;
 	--highlight: #eaddd5;
+	--theme: #32292b;
 
 	--positive: #00d439;
 	--negative: #ff5449;
@@ -63,6 +64,7 @@ h1 {
 	font-family: 'Norman', 'Reckless Neue';
 	letter-spacing: 2.2px;
 	font-weight: bold !important;
+	color: var(--theme);
 }
 
 h2 {
@@ -121,7 +123,7 @@ button span {
 }
 
 button.affirmative span {
-	background-color: #1c1819;
+	background-color: var(--theme);
 	color: white;
 }
 
