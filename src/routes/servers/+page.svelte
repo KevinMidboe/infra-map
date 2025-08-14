@@ -1,6 +1,7 @@
 <script lang="ts">
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import ServerComp from '$lib/components/Server.svelte';
+	import ServerSummary from '$lib/components/ServerSummary.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -9,6 +10,8 @@
 </script>
 
 <PageHeader>Servers</PageHeader>
+
+<ServerSummary {nodes} />
 
 <div class="server-list">
 	{#each nodes as node (node.name)}
