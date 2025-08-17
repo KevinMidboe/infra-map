@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { formatBytes } from "$lib/utils/conversion";
-	import type { Node } from "$lib/interfaces/proxmox";
+	import { formatBytes } from '$lib/utils/conversion';
+	import type { Node } from '$lib/interfaces/proxmox';
 
 	export let nodes: Node[];
 
@@ -19,8 +19,6 @@
 			.map((n) => n.lxcs.filter((l) => l?.template !== 1 && l.status === 'running'))
 			.flat(2).length
 	};
-
-
 </script>
 
 <div class="main-container">

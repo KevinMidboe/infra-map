@@ -50,7 +50,7 @@
 			case 3:
 				return '#DB4537';
 			default:
-				return 'blue'
+				return 'blue';
 		}
 	}
 

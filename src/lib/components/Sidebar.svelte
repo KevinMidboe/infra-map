@@ -4,13 +4,13 @@
 	import { allRoutes } from '$lib/remote/filesystem.remote.ts';
 
 	let mobileNavOpen = $state(false);
-	let pages = $state([])
+	let pages = $state([]);
 
 	async function resolvePages() {
-		pages = await allRoutes()
+		pages = await allRoutes();
 	}
 
-	resolvePages()
+	resolvePages();
 
 	const activePage = derived(page, ($page) => $page.url.pathname);
 	const toggle = () => {

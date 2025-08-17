@@ -8556,7 +8556,6 @@ const hassData = [
 	}
 ];
 
-
 function getNeighbors(data) {
 	return (
 		data.routes
@@ -8582,21 +8581,21 @@ function getNeighbors(data) {
 }
 
 function getCoordinatorNeighbors(coordinatorId) {
-  return hassData.filter(d => {
-    const exists = d.neighbors.findIndex(n => n.ieee === coordinatorId)
-    return exists;
-  })
+	return hassData.filter((d) => {
+		const exists = d.neighbors.findIndex((n) => n.ieee === coordinatorId);
+		return exists;
+	});
 }
 
 let firstNode = [
 	{
 		id: 0,
 		name: 'HUB',
-    ieee: hassData[0].ieee,
-    device: hassData[0].name,
-    area: hassData[0].area_id,
-    type: hassData[0].device_type,
-    neighbors: getCoordinatorNeighbors('00:21:2e:ff:ff:09:44:73'),
+		ieee: hassData[0].ieee,
+		device: hassData[0].name,
+		area: hassData[0].area_id,
+		type: hassData[0].device_type,
+		neighbors: getCoordinatorNeighbors('00:21:2e:ff:ff:09:44:73'),
 		group: 0
 	}
 ];
@@ -8604,14 +8603,14 @@ let firstNode = [
 const moreNodes = hassData
 	.filter((d) => d?.user_given_name && d.user_given_name !== '')
 	.map((d) => {
-    const group = d.device_type === 'EndDevice' ? 2 : 1 
+		const group = d.device_type === 'EndDevice' ? 2 : 1;
 
 		return {
 			name: d.user_given_name,
 			ieee: d.ieee,
-      device: d.name,
-      area: d.area_id,
-      type: d.device_type,
+			device: d.name,
+			area: d.area_id,
+			type: d.device_type,
 			neighbors: getNeighbors(d),
 			group
 		};
@@ -8631,11 +8630,11 @@ const link = firstNode
 		return (
 			d?.neighbors?.map((n) => {
 				const matching = nodes.findIndex((node) => node.ieee === n.ieee);
-        if (matching === -1) return
+				if (matching === -1) return;
 
 				return {
 					source,
-					target: matching,
+					target: matching
 				};
 			}) || []
 		);
@@ -8647,10 +8646,10 @@ const moreLinks = nodes
 	.map((d, source) => {
 		return (
 			d?.neighbors?.map((n) => {
-        if (n.ieee === '00:21:2e:ff:ff:09:44:73') return
+				if (n.ieee === '00:21:2e:ff:ff:09:44:73') return;
 
 				const matching = nodes.findIndex((node) => node.ieee === n.ieee);
-        if (matching === -1) return
+				if (matching === -1) return;
 
 				return {
 					target: matching,
@@ -8662,6 +8661,6 @@ const moreLinks = nodes
 	.flat()
 	.filter((el) => el !== undefined);
 
-const links = link.concat(moreLinks)
+const links = link.concat(moreLinks);
 
 export const data = { nodes, links };

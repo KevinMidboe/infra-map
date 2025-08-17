@@ -3,7 +3,6 @@ import { prerender } from '$app/server';
 export const allRoutes = prerender(() => {
 	const modules = import.meta.glob('/src/routes/**/+page.svelte');
 	const routes = Object.keys(modules).map((path) => {
-		console.log(path);
 		// Remove '/src/routes' prefix and '+page.svelte' suffix
 		let route = path.replace('/src/routes', '').replace('/+page.svelte', '');
 		// Handle the root route
@@ -19,5 +18,5 @@ export const allRoutes = prerender(() => {
 		};
 	});
 
-	return [{name: 'Home', path: '/'}, ...allRoute].filter(r => r.name);
+	return [{ name: 'Home', path: '/' }, ...allRoute].filter((r) => r.name);
 });
