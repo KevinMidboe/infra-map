@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "svelte-kit sync && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -17,7 +17,7 @@
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@sveltejs/adapter-node": "^5.2.12",
-		"@sveltejs/kit": "^2.16.0",
+		"@sveltejs/kit": "^2.27.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
@@ -35,6 +35,7 @@
 		"@kubernetes/client-node": "^1.1.0",
 		"@microsoft/fetch-event-source": "^2.0.1",
 		"@zerodevx/svelte-json-view": "^1.0.11",
+		"force-graph": "^1.50.1",
 		"sqlite": "^5.1.1",
 		"sqlite3": "^5.1.7",
 		"sveltekit-sse": "^0.13.16"
