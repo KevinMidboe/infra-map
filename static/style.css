@@ -128,7 +128,9 @@ button.affirmative span {
 }
 
 button.affirmative:hover span {
-	background-color: #363132;
+	border-color: var(--highlight);
+	background-color: var(--highlight);
+	color: var(--theme);
 }
 
 button:disabled {

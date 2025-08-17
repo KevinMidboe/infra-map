@@ -8567,16 +8567,7 @@ function getNeighbors(data) {
 				return hassData.filter((n) => n.ieee === neigh[0].ieee);
 			})
 			?.flat()
-			?.map((target) => {
-				if (target === 29) {
-					return;
-				} else if (target === undefined) {
-					return;
-				}
-
-				return target;
-			})
-			.filter((_) => _ !== undefined) ?? []
+			?.filter((_) => _ !== undefined) ?? []
 	);
 }
 
@@ -8600,18 +8591,24 @@ let firstNode = [
 	}
 ];
 
-const moreNodes = hassData
-	.filter((d) => d?.user_given_name && d.user_given_name !== '')
+let nodes = hassData
 	.map((d) => {
-		const group = d.device_type === 'EndDevice' ? 2 : 1;
+		let group = 1;
+		let neighbors = getNeighbors(d);
+
+		if (d?.device_type === 'EndDevice') group = 2;
+		if (d?.available === false) {
+			group = 3;
+			neighbors = [];
+		}
 
 		return {
-			name: d.user_given_name,
+			name: d.user_given_name || d.name,
 			ieee: d.ieee,
 			device: d.name,
 			area: d.area_id,
 			type: d.device_type,
-			neighbors: getNeighbors(d),
+			neighbors,
 			group
 		};
 	})
@@ -8619,11 +8616,17 @@ const moreNodes = hassData
 	.map((n, id) => {
 		return {
 			...n,
-			id: id + 1
+			id
 		};
 	});
 
-const nodes = firstNode.concat(moreNodes);
+const hubMac = '00:21:2e:ff:ff:09:44:73';
+const hubNode = nodes.findIndex((n) => n.ieee === hubMac);
+nodes[hubNode].neighbors = getNeighbors(hubMac);
+nodes[hubNode].group = 0;
+
+// const nodes = firstNode.concat(moreNodes);
+// const nodes = moreNodes;
 
 const link = firstNode
 	.map((d, source) => {
@@ -8646,8 +8649,6 @@ const moreLinks = nodes
 	.map((d, source) => {
 		return (
 			d?.neighbors?.map((n) => {
-				if (n.ieee === '00:21:2e:ff:ff:09:44:73') return;
-
 				const matching = nodes.findIndex((node) => node.ieee === n.ieee);
 				if (matching === -1) return;
 
@@ -8662,5 +8663,6 @@ const moreLinks = nodes
 	.filter((el) => el !== undefined);
 
 const links = link.concat(moreLinks);
+// const links = moreLinks;
 
-export const data = { nodes, links };
+export let data = { nodes, links };

@@ -5,9 +5,11 @@
 	import { data } from '$lib/utils/zigbee_devices';
 
 	let width = 650;
+	let originalData = { ...data };
 	let element;
 	let hovering;
 	let Graph;
+	let state = 0;
 	export const ssr = false;
 
 	function nodeCanvasObject(node, ctx, globalScale) {
@@ -24,7 +26,7 @@
 		let color = groupToColor(node.group);
 		if (hovering) {
 			const hoveredNeighbor = hovering?.neighbors?.findIndex((n) => n.ieee === node.ieee);
-			color = hoveredNeighbor > -1 ? hexToRgba(color, 0.2) : color;
+			color = hoveredNeighbor === -1 && hovering.ieee !== node.ieee ? hexToRgba(color, 0.2) : color;
 		}
 
 		ctx.fillStyle = color || 'blue';
@@ -59,6 +61,7 @@
 		el.style.display = 'flex';
 		el.style.flexDirection = 'column';
 		const ob = {
+			Name: node.name,
 			IEEE: node.ieee,
 			'Device type': node.type,
 			NWK: '0x3cf1',
@@ -74,10 +77,7 @@
 		return el;
 	}
 
-	onMount(async function () {
-		// window.addEventListener('mousemove', trackMouse, false);
-		console.log(data);
-
+	async function draw() {
 		const ForceGraph = (await import('force-graph')).default;
 		Graph = new ForceGraph(element)
 			.width(800)
@@ -98,11 +98,41 @@
 				console.log(node);
 			});
 
-		setTimeout(() => Graph.zoomToFit(0, 140), 2);
+		setTimeout(() => Graph?.zoomToFit(0, 140), 20);
+	}
+
+	onMount(() => {
+		draw();
+		// window.addEventListener('mousemove', trackMouse, false);
+		console.log(data);
 	});
+
+	function toggleView() {
+		if (state === 0) {
+			data.links = originalData.links.filter(
+				(l) => l.source.ieee === '00:21:2e:ff:ff:09:44:73'
+			);
+		} else if (state === 1) {
+			data.links = originalData.links;
+		} else if (state === 2) {
+			data.links = originalData.links;
+			data.links.shift();
+		}
+
+		state += 1;
+		if (state === 3) state = 0;
+
+		console.log(data);
+		Graph.graphData(data);
+		draw();
+	}
 </script>
 
 <PageHeader>Zigbee</PageHeader>
+
+<div>
+	<button class="affirmative" on:click={toggleView}><span>Toggle topology</span></button>
+</div>
 
 <div class="container">
 	<div class="header">
@@ -114,7 +144,17 @@
 	<div id="graph" bind:this={element}></div>
 </div>
 
+
 <style lang="scss">
+	button span {
+		padding: 0.25rem 0.5rem;
+		margin-bottom: 1.5rem;
+		font-size: 1rem;
+		font-weight: 400;
+		letter-spacing: 1px;
+		font-style: italic;
+	}
+
 	.container {
 		display: inline-block;
 		border: 3px solid black;
