@@ -1,38 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
+	import { allRoutes } from '$lib/remote/filesystem.remote.ts';
 
 	let mobileNavOpen = $state(false);
-	const pages = [
-		{
-			name: 'Home',
-			path: '/'
-		},
-		{
-			name: 'Sites',
-			path: '/sites'
-		},
-		{
-			name: 'Servers',
-			path: '/servers'
-		},
-		{
-			name: 'Printer',
-			path: '/printer'
-		},
-		{
-			name: 'Network',
-			path: '/network'
-		},
-		{
-			name: 'Cluster',
-			path: '/cluster'
-		},
-		{
-			name: 'Health',
-			path: '/health'
-		}
-	];
+	let pages = $state([])
+
+	async function resolvePages() {
+		pages = await allRoutes()
+	}
+
+	resolvePages()
 
 	const activePage = derived(page, ($page) => $page.url.pathname);
 	const toggle = () => {
