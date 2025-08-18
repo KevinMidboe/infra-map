@@ -125,12 +125,13 @@ button span {
 button.affirmative span {
 	background-color: var(--theme);
 	color: white;
+	font-style: italic;
 }
 
 button.affirmative:hover span {
-	border-color: var(--highlight);
-	background-color: var(--highlight);
 	color: var(--theme);
+	border-color: var(--theme);
+	background-color: var(--highlight);
 }
 
 button:disabled {
