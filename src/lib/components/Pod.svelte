@@ -34,12 +34,17 @@
 	// set uptime
 	let uptime = writable(new Date().getTime() - new Date(status?.startTime || 0).getTime());
 
+	function idlePhase(phase: string | undefined) {
+		const phases = ['Failed', 'Succeeded'];
+		return phases.includes(phase || '');
+	}
+
 	onMount(() => {
 		setInterval(() => uptime.update((n) => n + 1000), 1000);
 	});
 </script>
 
-<div class="card">
+<div class={`card ${idlePhase(status?.phase) && 'not-running'}`}>
 	<div class="header">
 		<div class="icon"><Layers /></div>
 		<span class="name">{name}</span>
@@ -131,6 +136,11 @@
 		);
 		pointer-events: all;
 		cursor: auto;
+
+		&.not-running {
+			border: 2px dashed var(--theme);
+			opacity: 0.6;
+		}
 	}
 
 	.header {
