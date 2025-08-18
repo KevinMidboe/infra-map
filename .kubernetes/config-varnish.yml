@@ -4,7 +4,7 @@ metadata:
   name: varnish-vcl
   namespace: ${NAMESPACE}
 data:
-  default.vcl: |
+  default.vcl: |-
     vcl 4.0;
 
     import std;

@@ -33,12 +33,28 @@ platform:
   arch: amd64
 
 steps:
-  - name: Publish to ghcr
+  - name: Publish app to ghcr
     image: plugins/docker
     settings:
       registry: ghcr.io
       repo: ghcr.io/kevinmidboe/${DRONE_REPO_NAME}
       dockerfile: Dockerfile
+      compress: true
+      username:
+        from_secret: GITHUB_USERNAME
+      password:
+        from_secret: GHCR_UPLOAD_TOKEN
+      tags:
+        - latest
+        - ${DRONE_COMMIT_SHA}
+
+  - name: Publish varnish to ghcr
+    image: plugins/docker
+    settings:
+      registry: ghcr.io
+      repo: ghcr.io/kevinmidboe/varnish-infra-map
+      dockerfile: varnish/Dockerfile
+      compress: true
       username:
         from_secret: GITHUB_USERNAME
       password:
@@ -129,6 +145,6 @@ volumes:
     temp: {}
 ---
 kind: signature
-hmac: 83b1ec6458ceddef038000faac2b391d192530ceb681b790ad79c90456f12cca
+hmac: 8e51cded679321781a79fa1f393fe3c23b56426129aa557eee6f14f4f2618076
 
 ...
