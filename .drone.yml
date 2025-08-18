@@ -96,6 +96,7 @@ steps:
     commands:
       - mkdir -p /root/.kube
       - echo "IMAGE=ghcr.io/kevinmidboe/${DRONE_REPO_NAME}:${DRONE_COMMIT_SHA}" > /root/.kube/.env
+      - echo "VARNISH_IMAGE=ghcr.io/kevinmidboe/varnish-${DRONE_REPO_NAME}" >> /root/.kube/.env
       - echo "NAMESPACE=${DRONE_REPO_NAME}" >> /root/.kube/.env
       - 'curl -s
         -H "X-Vault-Token: $VAULT_TOKEN"
@@ -145,6 +146,6 @@ volumes:
     temp: {}
 ---
 kind: signature
-hmac: 8e51cded679321781a79fa1f393fe3c23b56426129aa557eee6f14f4f2618076
+hmac: b3cc991813f340024e65c68d5509cb23025796914a2e2ac72f71657a347e0708
 
 ...

@@ -31,7 +31,7 @@ spec:
             requests:
               cpu: 250m
               memory: 64Mi
-        - image: varnish:7.4
+        - image: ${VARNISH_IMAGE}:latest
           imagePullPolicy: IfNotPresent
           name: varnish
           command: ['varnishd']

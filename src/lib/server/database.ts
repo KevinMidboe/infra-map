@@ -1,108 +1,104 @@
 import { currentFilament } from './filament';
-
-import { open } from 'sqlite';
-import sqlite3 from 'sqlite3';
-import { resolve } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import pg from 'pg';
+import { env } from '$env/dynamic/private';
 import type { Filament } from '$lib/interfaces/printer';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const dbPath = resolve(__dirname, '../../../db.sqlite');
+const { Pool } = pg;
 
-let db;
+let pool: InstanceType<typeof Pool> | undefined;
 
 async function initDb() {
-	const db = await open({
-		filename: dbPath,
-		driver: sqlite3.Database
+	if (pool) return pool;
+
+	pool = new Pool({
+		connectionString: env.DATABASE_URL // e.g. postgres://user:pass@localhost:5432/mydb
 	});
 
-	// Transaction to run schemas
-	await db.exec('BEGIN TRANSACTION');
+	const client = await pool.connect();
 	try {
+		await client.query('BEGIN');
+
 		for (const stmt of schemas) {
-			await db.run(stmt);
+			await client.query(stmt);
 		}
-		await db.exec('COMMIT');
-	} catch (err) {
+
+		await client.query('COMMIT');
+	} catch (err: any) {
 		console.error('Failed to create tables:', err.message);
-		await db.exec('ROLLBACK');
+		await client.query('ROLLBACK');
+		throw err;
+	} finally {
+		client.release();
 	}
 
-	return db;
+	return pool;
 }
 
 const schemas = [
 	`
 	CREATE TABLE IF NOT EXISTS filament (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		id SERIAL PRIMARY KEY,
 		hex TEXT NOT NULL,
 		color TEXT NOT NULL,
 		material TEXT,
 		weight REAL,
 		link TEXT,
 		added INTEGER, -- epoch seconds
-		updated INTEGER -- epoch seconds
+		updated INTEGER, -- epoch seconds
+		UNIQUE (hex, updated)
 	)
 	`
 ];
 
-async function seedData(db) {
+async function seedData(pool: InstanceType<typeof Pool>) {
 	const baseTimestamp = Math.floor(new Date('2025-04-01T05:47:01+00:00').getTime() / 1000);
 	const filaments = currentFilament();
 
-	const stmt = await db.prepare(`
-        INSERT OR IGNORE INTO filament (hex, color, material, weight, link, added, updated)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-
-	await db.exec('BEGIN TRANSACTION');
+	const client = await pool.connect();
 	try {
-		for (const f of filaments) {
-			const existing = await db.get('SELECT 1 FROM filament WHERE hex = ? AND updated = ?', [
-				f.hex,
-				baseTimestamp
-			]);
+		await client.query('BEGIN');
 
-			if (!existing) {
-				await db.run(
-					`INSERT INTO filament (hex, color, material, weight, link, added, updated)
-					VALUES (?, ?, ?, ?, ?, ?, ?)`,
-					[f.hex, f.color, f.material, f.weight, f.link, baseTimestamp, baseTimestamp]
-				);
-			}
+		for (const f of filaments) {
+			await client.query(
+				`INSERT INTO filament (hex, color, material, weight, link, added, updated)
+				 VALUES ($1, $2, $3, $4, $5, $6, $7)
+				 ON CONFLICT (hex, updated) DO NOTHING`,
+				[f.hex, f.color, f.material, f.weight, f.link, baseTimestamp, baseTimestamp]
+			);
 		}
 
-		await db.exec('COMMIT');
-	} catch (err) {
+		await client.query('COMMIT');
+	} catch (err: any) {
 		console.error('Failed to seed data:', err.message);
-		await db.exec('ROLLBACK');
+		await client.query('ROLLBACK');
+		throw err;
 	} finally {
-		await stmt.finalize();
+		client.release();
 	}
 }
 
 // Export helper to use db elsewhere
 async function getDb() {
-	if (db !== undefined) return db;
+	if (pool) return pool;
 
-	db = await initDb();
-	await seedData(db);
+	const p = await initDb();
+	await seedData(p);
 	console.log('Database setup and seeding complete!');
+	return p;
 }
 
 export async function getAllFilament(): Promise<Array<Filament>> {
-	const db = await getDb();
-	const result = await db?.all('SELECT * FROM filament');
-	return result || [];
+	const pool = await getDb();
+	const result = await pool.query('SELECT * FROM filament');
+	return result.rows || [];
 }
 
 export async function getFilamentByColor(name: string) {
-	const db = await getDb();
-	const result = await db?.get('SELECT * FROM filament WHERE LOWER(color) = ?', [name]);
-	return result || undefined;
+	const pool = await getDb();
+	const result = await pool.query('SELECT * FROM filament WHERE LOWER(color) = LOWER($1) LIMIT 1', [
+		name
+	]);
+	return result.rows[0] || undefined;
 }
 
 export async function addFilament(
@@ -114,22 +110,62 @@ export async function addFilament(
 ) {
 	const timestamp = Math.floor(new Date().getTime() / 1000);
 
-	const db = await getDb();
-	const result = await db.run(
+	const pool = await getDb();
+	const result = await pool.query(
 		`INSERT INTO filament (hex, color, material, weight, link, added, updated)
-					VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		 VALUES ($1, $2, $3, $4, $5, $6, $7)
+		 RETURNING id`,
 		[hex, color, material, weight, link, timestamp, timestamp]
 	);
-	return { id: result.lastID };
+	return { id: result.rows[0].id };
 }
 
-export async function updatefilament({ id, make, model, year }) {
-	const db = await getDb();
-	await db.run(
-		'UPDATE filaments SET make = ?, model = ?, year = ? WHERE id = ?',
-		make,
-		model,
-		year,
-		id
-	);
+export async function updateFilament({
+	id,
+	hex,
+	color,
+	material,
+	weight,
+	link
+}: {
+	id: number;
+	hex?: string;
+	color?: string;
+	material?: string;
+	weight?: number;
+	link?: string;
+}) {
+	const pool = await getDb();
+
+	// Dynamically build query based on provided fields
+	const fields = [];
+	const values = [];
+	let i = 1;
+
+	if (hex !== undefined) {
+		fields.push(`hex = $${i++}`);
+		values.push(hex);
+	}
+	if (color !== undefined) {
+		fields.push(`color = $${i++}`);
+		values.push(color);
+	}
+	if (material !== undefined) {
+		fields.push(`material = $${i++}`);
+		values.push(material);
+	}
+	if (weight !== undefined) {
+		fields.push(`weight = $${i++}`);
+		values.push(weight);
+	}
+	if (link !== undefined) {
+		fields.push(`link = $${i++}`);
+		values.push(link);
+	}
+
+	if (fields.length === 0) return; // nothing to update
+
+	values.push(id);
+	const query = `UPDATE filament SET ${fields.join(', ')}, updated = EXTRACT(EPOCH FROM NOW())::INT WHERE id = $${i}`;
+	await pool.query(query, values);
 }

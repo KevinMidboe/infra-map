@@ -8,6 +8,5 @@ export const load = async ({ params }: Parameters<PageServerLoad>[0]) => {
 	}
 
 	const filament = await getFilamentByColor(id);
-	console.log('fil:', filament);
 	return { id, filament: filament };
 };
