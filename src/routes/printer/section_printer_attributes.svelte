@@ -63,7 +63,7 @@
 	</div>
 
 	<div class="printer-image">
-		<img src="/printer.png" />
+		<img src="/images/printer.png" />
 	</div>
 </Section>
 
