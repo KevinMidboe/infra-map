@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: varnish-vcl
+  namespace: ${NAMESPACE}
+data:
+  default.vcl: |
+    vcl 4.0;
+
+    import std;
+    import digest;
+
+    # Define backend pointing to Home Assistant IP
+    backend hass_backend {
+        .host = "${HOMEASSISTANT_IP}";
+        .port = "8123";
+    }
+
+    sub vcl_recv {
+        # Handle CORS preflight
+        if (req.method == "OPTIONS") {
+            return (synth(204, "Preflight"));
+        }
+
+        # Rewrite image URL
+        if (req.url ~ "^/image/") {
+            # Extract everything after /image/ and store it
+            set req.http.X-Image-URL = regsub(req.url, "^/image/(.*)", "\1");
+            # Rewrite req.url to match backend expectations
+            set req.url = regsub(req.http.X-Image-URL, "^http://[^/]+", "");
+        }
+
+        # Remove cookies so content is cacheable
+        unset req.http.Cookie;
+    }
+
+    sub vcl_synth {
+        if (resp.status == 204) {
+            set resp.http.Access-Control-Allow-Origin = "*";
+            set resp.http.Access-Control-Allow-Methods = "GET, OPTIONS";
+            set resp.http.Access-Control-Allow-Headers = "Content-Type, X-Cache-ID";
+            set resp.http.Content-Length = "0";
+            return (deliver);
+        }
+
+        if (resp.status == 304) {
+            set resp.http.ETag = req.http.If-None-Match;
+            set resp.http.Content-Length = "0";
+            return (deliver);
+        }
+    }
+
+    sub vcl_backend_fetch {
+        # Always use the HASS backend
+        set bereq.backend = hass_backend;
+
+        # Set proper Host header from original URL
+        # if (bereq.http.X-Image-URL) {
+        #     set bereq.http.Host = regsub(bereq.http.X-Image-URL, "^http://([^/]+).*", "\1");
+        #     set bereq.http.Host = regsub(bereq.http.Host, ":[0-9]+$", "");
+        # }
+    }
+
+    sub vcl_backend_response {
+        set beresp.ttl = 1s;
+        set beresp.grace = 60s;
+        set beresp.keep = 60s;
+
+        # Ensure ETag is passed to client
+        if (beresp.http.ETag) {
+            set beresp.http.X-Cache-ETag = beresp.http.ETag;
+        } else {
+            # Optional: generate one if not provided
+            # set beresp.http.ETag = digest.hash_md5(beresp.body);
+            set beresp.http.ETag = beresp.http.Content-Length;
+            set beresp.http.X-Cache-ETag = beresp.http.ETag;
+        }
+    }
+
+    sub vcl_hit {
+        if (obj.ttl < 0s && std.healthy(req.backend_hint)) {
+            return (deliver);
+        }
+    }
+
+    sub vcl_deliver {
+        unset resp.http.X-Image-URL;
+        set resp.http.Access-Control-Allow-Origin = "*";
+
+        # Handle conditional request with ETag
+        if (
+            req.http.If-None-Match &&
+            req.http.If-None-Match == resp.http.ETag
+        ) {
+            return (synth(304));
+        }
+    }

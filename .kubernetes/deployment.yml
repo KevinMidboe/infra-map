@@ -31,6 +31,26 @@ spec:
             requests:
               cpu: 250m
               memory: 64Mi
+        - image: varnish:7.4
+          imagePullPolicy: IfNotPresent
+          name: varnish
+          command: ['varnishd']
+          args: ['-F', '-f', '/etc/varnish/default.vcl', '-a', ':6081', '-s', 'malloc,512m']
+          volumeMounts:
+            - name: varnish-vcl
+              mountPath: /etc/varnish/default.vcl
+              subPath: default.vcl
+          resources:
+            limits:
+              cpu: 900m
+              memory: 828Mi
+            requests:
+              cpu: 250m
+              memory: 64Mi
       restartPolicy: Always
       imagePullSecrets:
         - name: ghcr-login-secret
+      volumes:
+        - name: varnish-vcl
+          configMap:
+            name: varnish-vcl
