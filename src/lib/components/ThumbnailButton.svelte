@@ -129,6 +129,7 @@
 				.link {
 					opacity: 1;
 					left: calc(100% - 1rem);
+					top: 2px;
 					fill: var(--color);
 				}
 			}
