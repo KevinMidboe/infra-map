@@ -14,9 +14,10 @@
 	const rawDaemons: V1DaemonSet[] = data?.daemons;
 	const rawNodes: V1Node[] = data?.nodes;
 
-	let deployments = $derived(rawDeployments.filter((d) => d.metadata.name.includes(filterValue)));
-	let daemons = $derived(rawDaemons.filter((d) => d.metadata.name.includes(filterValue)));
-	let nodes = $derived(rawNodes.filter((n) => n.metadata.name.includes(filterValue)));
+	let filterLC = $derived(filterValue.toLowerCase())
+	let deployments = $derived(rawDeployments.filter((d) => d.metadata.name.includes(filterLC)));
+	let daemons = $derived(rawDaemons.filter((d) => d.metadata.name.includes(filterLC)));
+	let nodes = $derived(rawNodes.filter((n) => n.metadata.name.includes(filterLC)));
 </script>
 
 <PageHeader>Cluster overview</PageHeader>
@@ -77,6 +78,13 @@
 <style lang="scss">
 	.search-section {
 		padding: 1.714rem 0px;
+		top: 4.5rem;
+		background-color: var(--bg);
+		position: sticky;
+
+		@media screen and (max-width: 480px) {
+			top: 3rem;
+		}
 	}
 
 	.server-list {
