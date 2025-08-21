@@ -21,6 +21,8 @@ RUN git clone https://github.com/varnish/libvmod-digest.git /opt/libvmod-digest 
     ./configure VARNISHSRC=/usr/include/varnish && \
     make && make install
 
+COPY . /etc/varnish/
+
 EXPOSE 6081
 
 CMD ["varnishd", "-F", "-f", "/etc/varnish/default.vcl", "-a", ":6081", "-s", "malloc,512m"]

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: infra-map
+    ports:
+      - '3000:3000' # svelte-kit preview HTTP
+  varnish:
+    build: varnish
+    container_name: varnish-cache
+    ports:
+      - '6081:6081' # Varnish HTTP
+    environment:
+      - VARNISH_LISTEN_PORT=6081
+    command: >
+      varnishd
+      -F
+      -f /etc/varnish/default.vcl
+      -s malloc,256m
+      -a :6081

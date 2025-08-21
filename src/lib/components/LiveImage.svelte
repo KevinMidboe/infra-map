@@ -33,7 +33,8 @@
 	function refetchImage() {
 		let url;
 		try {
-			url = new URL(`${IMAGE_PROXY_URL}/image/${imageUrl}`);
+			const { protocol, host } = window.location;
+			url = new URL(`${protocol}//${host}/image-proxy/${imageUrl}`);
 		} catch {
 			console.log('url not valid, returning');
 			return;

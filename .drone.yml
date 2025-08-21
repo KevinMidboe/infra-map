@@ -48,6 +48,44 @@ steps:
         - latest
         - ${DRONE_COMMIT_SHA}
 
+trigger:
+  event:
+    include:
+      - push
+    exclude:
+      - pull_request
+  branch:
+    - main
+    - update
+
+depends_on:
+  - Build
+
+---
+kind: pipeline
+type: docker
+name: Publish
+
+platform:
+  os: linux
+  arch: amd64
+kind: pipeline
+type: docker
+name: config-check
+
+steps:
+  - name: check-config
+    image: alpine/git
+    commands:
+      - git fetch --no-tags --depth=2
+      - |
+        if git diff --quiet HEAD^ HEAD -- varnish/default.vcl; then
+          echo "No changes in varnish config file, skipping..."
+          exit 78  # exit code 78 = skip in Drone
+        else
+          echo "Changes detected in varnish config"
+        fi
+
   - name: Publish varnish to ghcr
     image: plugins/docker
     settings:
@@ -72,7 +110,6 @@ trigger:
   branch:
     - main
     - update
-
 depends_on:
   - Build
 
@@ -146,6 +183,6 @@ volumes:
     temp: {}
 ---
 kind: signature
-hmac: b3cc991813f340024e65c68d5509cb23025796914a2e2ac72f71657a347e0708
+hmac: 01caa41521eac62356f6fc941cdd489dae8e2c4249bdb4e4dc1a32e101c639b7
 
 ...
