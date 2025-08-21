@@ -25,8 +25,6 @@
 		if (counter + 1 >= colors.length) counter = 1;
 		else counter += 1;
 
-		console.log(counter);
-
 		return {
 			bgColor: colors[counter - 1][0],
 			color: colors[counter - 1][1],
@@ -99,7 +97,6 @@
 		font-size: 1.1rem;
 		line-height: 1.4;
 		line-height: 1.7;
-		max-width: 80%;
 		color: #333;
 
 		background-color: #fafafa; /* Subtle background to separate it from the rest */

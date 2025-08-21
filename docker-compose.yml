@@ -1,21 +1,24 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  app:
-    build: .
-    container_name: infra-map
-    ports:
-      - '3000:3000' # svelte-kit preview HTTP
   varnish:
-    build: varnish
-    container_name: varnish-cache
+    build:
+      context: varnish
+      dockerfile: Dockerfile
+      args:
+        HASS_HOST: 10.0.0.82
+        FRONTEND_HOST: app
     ports:
-      - '6081:6081' # Varnish HTTP
+      - '6081:6081'
+    depends_on:
+      - app
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: '.env'
     environment:
-      - VARNISH_LISTEN_PORT=6081
-    command: >
-      varnishd
-      -F
-      -f /etc/varnish/default.vcl
-      -s malloc,256m
-      -a :6081
+      - NODE_ENV=production
+      - PORT=3000
+      - ORIGIN=http://localhost:3000

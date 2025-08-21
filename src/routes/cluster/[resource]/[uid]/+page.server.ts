@@ -13,7 +13,6 @@ const AVAILABLE_RESOURCES = [
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { resource, uid } = params;
-	console.log('PARAMS:', params);
 
 	if (!AVAILABLE_RESOURCES.includes(resource)) {
 		return {

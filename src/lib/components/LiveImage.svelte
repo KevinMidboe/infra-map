@@ -3,8 +3,7 @@
 	import { grey400x225 } from '$lib/utils/staticImageSource';
 	import Dialog from './Dialog.svelte';
 
-	const IMAGE_PROXY_URL = 'http://localhost:6081';
-	const IMAGE_REFRESH_INTERVAL = 300;
+	const IMAGE_REFRESH_INTERVAL = 3000;
 
 	let { imageUrl }: { imageUrl: string } = $props();
 	let lastUpdated = new Date();
@@ -17,9 +16,14 @@
 	function loadBlob(blob: Blob) {
 		const reader = new FileReader();
 		reader.onloadend = () => {
-			imageSource = reader.result || '';
 			const img = document.getElementById('live-image') as HTMLImageElement;
 			if (!img) return;
+
+			imageSource = reader?.result || '';
+			if (imageSource === '') {
+				console.log("no image data, returning")
+				return
+			}
 
 			// set imageSource to image element
 			img.src = `data:image/jpeg;base64; ${imageSource}`;
@@ -80,6 +84,7 @@
 	{:else}
 		<Dialog title="Live stream of printer" on:close={() => (fullscreen = false)}>
 			<img style="width: 100%;" src={String(imageSource)} id="live-image" />
+			<span>Last update {timestamp}s ago</span>
 		</Dialog>
 
 		<img src={String(grey400x225)} />

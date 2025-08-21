@@ -23,7 +23,6 @@ async function fetchImage(src: string) {
 }
 
 export const GET: RequestHandler = async ({ url }) => {
-	console.log('GET');
 	url.pathname = url.pathname.replace('/image/', '');
 
 	const res = await fetchImage(url.href);

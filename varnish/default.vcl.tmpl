@@ -3,20 +3,18 @@ vcl 4.0;
 import std;
 import digest;
 
-# include "handlers/ttl-override-handler.vcl";
 include "includes/x-cache-header.vcl";
-
 include "vcl_deliver.vcl";
 
 # Define backend pointing to Home Assistant IP
 backend hass_backend {
-    .host = "10.0.0.82";
+    .host = "{{ getenv `HASS_HOST` `homeassistant.local` }}";
     .port = "8123";
 }
 
 backend app_frontend {
-    .host = "host.docker.internal";
-    .port = "5173";
+    .host = "{{ getenv `FRONTEND_HOST` `localhost` }}";
+    .port = "3000";
 }
 
 sub vcl_recv {
