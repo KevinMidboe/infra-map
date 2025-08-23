@@ -2,18 +2,19 @@ vcl 4.0;
 
 import std;
 import digest;
+import directors;
 
 include "includes/x-cache-header.vcl";
 include "vcl_deliver.vcl";
 
 # Define backend pointing to Home Assistant IP
 backend hass_backend {
-    .host = "{{ getenv `HASS_HOST` `homeassistant.local` }}";
+    .host = "{{ getenv `IMAGE_HOST` `homeassistant.local` }}";
     .port = "8123";
 }
 
 backend app_frontend {
-    .host = "{{ getenv `FRONTEND_HOST` `localhost` }}";
+    .host = "{{ getenv `PROXY_HOST` `localhost` }}";
     .port = "3000";
 }
 
@@ -43,6 +44,17 @@ sub vcl_recv {
 
     # Remove cookies so content is cacheable
     unset req.http.Cookie;
+}
+
+// Svelte-kit needs to distinguish between it's own files and the Host header.
+// The X-Forwarded-* headers below are to tell svelte-kit where it's local files are,
+// and the Host header is included in the returned html & js referencing the external
+// domain or proxy requested by client.
+// https://svelte.dev/docs/kit/adapter-node#Environment-variables-ORIGIN-PROTOCOL_HEADER-HOST_HEADER-and-PORT_HEADER
+sub vcl_backend_fetch {
+    set bereq.http.X-Forwarded-Host = "localhost";
+    set bereq.http.X-Forwarded-Port = "3000";
+    set bereq.http.X-Forwarded-Proto = "http";
 }
 
 sub vcl_synth {

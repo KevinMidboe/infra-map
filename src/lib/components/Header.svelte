@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import User from '$lib/icons/user.svelte';
 	import { derived } from 'svelte/store';
 
 	// Create a derived store to extract breadcrumb data
@@ -9,14 +8,6 @@
 
 		return segments.map((segment, index) => {
 			let label = decodeURI(segment);
-
-			// if not uuid pattern, this is weird order of ops
-			/*
-			if (!segment.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
-				label = label.replace(/-/g, ' ')
-			}
-			*/
-
 			return {
 				label,
 				path: '/' + segments.slice(0, index + 1).join('/')
@@ -39,10 +30,6 @@
 			<span class="seperator">/</span>
 			<a href={crumb.path}>{crumb.label}</a>
 		{/each}
-	</div>
-
-	<div class="right">
-		<User />
 	</div>
 </div>
 

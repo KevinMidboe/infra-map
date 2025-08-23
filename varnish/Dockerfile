@@ -23,14 +23,12 @@ RUN git clone https://github.com/varnish/libvmod-digest.git /opt/libvmod-digest 
 
 COPY --from=hairyhenderson/gomplate:stable /gomplate /bin/gomplate
 
-ARG HASS_HOST
-ARG FRONTEND_HOST
-ENV HASS_HOST=$HASS_HOST
-ENV FRONTEND_HOST=$FRONTEND_HOST
-
 COPY default.vcl.tmpl /etc/varnish/
 COPY *.vcl /etc/varnish/
 COPY includes /etc/varnish/includes
+
+ARG PROXY_HOST=$PROXY_HOST
+ARG IMAGE_HOST=$IMAGE_HOST
 
 RUN gomplate -f /etc/varnish/default.vcl.tmpl -o /etc/varnish/default.vcl
 RUN rm /etc/varnish/default.vcl.tmpl

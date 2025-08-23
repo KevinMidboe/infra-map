@@ -61,20 +61,50 @@ Follow hass documentation on generating a api token: https://developers.home-ass
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+yarn dev
 ```
 
 ## Building
 
-To create a production version of your app:
+To create a production version to be run from node:
 
 ```bash
-npm run build
+yarn build
 ```
 
-You can preview the production build with `npm run preview`.
+To preview either use vite to serve or execute node entrypoint:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```bash
+yarn preview
+```
+
+or
+
+```bash
+node build/index.js
+```
+
+## Run using docker
+
+The application is configure to be used either standalone or behind a webserver. To build the svelte-application docker image run:
+
+> NB! Remember to configure .env, which is automatically picked up by docker-compose. Set and override for both containers in this file.
+
+Svelte-kit application:
+
+```bash
+docker build -t infra-map .
+```
+
+Varnish cache:
+
+```bash
+cd varnish
+docker build -t infra-varnish-cache .
+```
+
+Or both using docker compose:
+
+```bash
+docker compose up
+```
