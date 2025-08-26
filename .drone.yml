@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: Build
+name: Build app
 
 platform:
   os: linux
@@ -26,7 +26,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: Publish
+name: Publish app to gchr
 
 platform:
   os: linux
@@ -64,14 +64,11 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: Publish
+name: Publish varnish image
 
 platform:
   os: linux
   arch: amd64
-kind: pipeline
-type: docker
-name: config-check
 
 steps:
   - name: check-config
@@ -79,11 +76,11 @@ steps:
     commands:
       - git fetch --no-tags --depth=2
       - |
-        if git diff --quiet HEAD^ HEAD -- varnish/default.vcl; then
+        if git diff-tree --no-commit-id --name-only -r HEAD | grep -qE '(\.drone.yml|(varnish/.+(vcl|tmpl)(\n|$)))'; then
+          echo "Changes detected in varnish config"
+        else
           echo "No changes in varnish config file, skipping..."
           exit 78  # exit code 78 = skip in Drone
-        else
-          echo "Changes detected in varnish config"
         fi
 
   - name: Publish varnish to ghcr
@@ -99,7 +96,8 @@ steps:
       password:
         from_secret: GHCR_UPLOAD_TOKEN
       build_args_from_env:
-        - 
+        - IMAGE_HOST
+        - IMAGE_PROXY
       tags:
         - latest
         - ${DRONE_COMMIT_SHA}
@@ -113,13 +111,11 @@ trigger:
   branch:
     - main
     - update
-depends_on:
-  - Build
 
 ---
 kind: pipeline
 type: docker
-name: Deploy
+name: Deploy to kubernetes
 
 platform:
   os: linux
@@ -186,6 +182,4 @@ volumes:
     temp: {}
 ---
 kind: signature
-hmac: 01caa41521eac62356f6fc941cdd489dae8e2c4249bdb4e4dc1a32e101c639b7
-
-...
+hmac: 3ba933b1c9b7f6bda1691bfb0335290f461d08cebfc5e9fe60c2f272604189d0
