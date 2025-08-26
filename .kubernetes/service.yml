@@ -9,8 +9,9 @@ metadata:
 spec:
   ports:
     - port: 80
+      name: http
       protocol: TCP
-      targetPort: 3000
+      targetPort: 6081
   selector:
     app: infra-map
   sessionAffinity: None
