@@ -5,10 +5,10 @@ services:
     build:
       context: varnish
       dockerfile: Dockerfile
-      args:
-        # sets build variables. Overridden by env, but has sane defaults
-        IMAGE_HOST: ${IMAGE_HOST:-homeassistant.local}
-        PROXY_HOST: ${PROXY_HOST:-app}
+    environment:
+      # sets environment variables. Overridden by env, but has sane defaults
+      IMAGE_HOST: ${IMAGE_HOST:-homeassistant.local}
+      PROXY_HOST: ${PROXY_HOST:-app}
     ports:
       - '6081:6081'
     depends_on:
@@ -20,6 +20,7 @@ services:
       dockerfile: Dockerfile
     env_file: .env # sets container's environment
     environment:
+      - ORIGIN=http://localhost:3000
       - NODE_ENV=production
       - PROTOCOL_HEADER=x-forwarded-proto
       - HOST_HEADER=x-forwarded-host

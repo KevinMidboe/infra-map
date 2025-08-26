@@ -64,61 +64,6 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: Publish
-
-platform:
-  os: linux
-  arch: amd64
-kind: pipeline
-type: docker
-name: config-check
-
-steps:
-  - name: check-config
-    image: alpine/git
-    commands:
-      - git fetch --no-tags --depth=2
-      - |
-        if git diff --quiet HEAD^ HEAD -- varnish/default.vcl; then
-          echo "No changes in varnish config file, skipping..."
-          exit 78  # exit code 78 = skip in Drone
-        else
-          echo "Changes detected in varnish config"
-        fi
-
-  - name: Publish varnish to ghcr
-    image: plugins/docker
-    settings:
-      registry: ghcr.io
-      repo: ghcr.io/kevinmidboe/varnish-infra-map
-      contexT: varnish
-      dockerfile: Dockerfile
-      compress: true
-      username:
-        from_secret: GITHUB_USERNAME
-      password:
-        from_secret: GHCR_UPLOAD_TOKEN
-      build_args_from_env:
-        - 
-      tags:
-        - latest
-        - ${DRONE_COMMIT_SHA}
-
-trigger:
-  event:
-    include:
-      - push
-    exclude:
-      - pull_request
-  branch:
-    - main
-    - update
-depends_on:
-  - Build
-
----
-kind: pipeline
-type: docker
 name: Deploy
 
 platform:
@@ -136,7 +81,7 @@ steps:
     commands:
       - mkdir -p /root/.kube
       - echo "IMAGE=ghcr.io/kevinmidboe/${DRONE_REPO_NAME}:${DRONE_COMMIT_SHA}" > /root/.kube/.env
-      - echo "VARNISH_IMAGE=ghcr.io/kevinmidboe/varnish-${DRONE_REPO_NAME}" >> /root/.kube/.env
+      - echo "VARNISH_IMAGE=ghcr.io/kevinmidboe/varnish-${DRONE_REPO_NAME}:latest" >> /root/.kube/.env
       - echo "NAMESPACE=${DRONE_REPO_NAME}" >> /root/.kube/.env
       - 'curl -s
         -H "X-Vault-Token: $VAULT_TOKEN"
@@ -184,8 +129,57 @@ depends_on:
 volumes:
   - name: kube-config
     temp: {}
+
+---
+kind: pipeline
+type: docker
+name: Publish varnish
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: Check for varnish changes
+    image: alpine/git
+    commands:
+      - git fetch --no-tags --depth=2
+      - |
+        if git diff-tree --no-commit-id --name-only -r HEAD | grep -qE '(\.drone.yml|(varnish/.+(vcl|tmpl)(\n|$)))'; then
+          echo "Changes detected in varnish config"
+        else
+          echo "No changes in varnish config file, skipping..."
+          exit 78  # exit code 78 = skip in Drone
+        fi
+
+  - name: Publish varnish image to ghcr
+    image: plugins/docker
+    settings:
+      registry: ghcr.io
+      repo: ghcr.io/kevinmidboe/varnish-infra-map
+      context: varnish
+      dockerfile: varnish/Dockerfile
+      compress: true
+      username:
+        from_secret: GITHUB_USERNAME
+      password:
+        from_secret: GHCR_UPLOAD_TOKEN
+      tags:
+        - latest
+        - ${DRONE_COMMIT_SHA}
+
+trigger:
+  event:
+    include:
+      - push
+    exclude:
+      - pull_request
+  branch:
+    - main
+    - update
+
 ---
 kind: signature
-hmac: 01caa41521eac62356f6fc941cdd489dae8e2c4249bdb4e4dc1a32e101c639b7
+hmac: b4b6a98b76fdf3cf297b46cf986a3d46f3d4050e623f2c769267181c7075a6ca
 
 ...

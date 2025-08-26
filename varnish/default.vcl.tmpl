@@ -46,17 +46,6 @@ sub vcl_recv {
     unset req.http.Cookie;
 }
 
-// Svelte-kit needs to distinguish between it's own files and the Host header.
-// The X-Forwarded-* headers below are to tell svelte-kit where it's local files are,
-// and the Host header is included in the returned html & js referencing the external
-// domain or proxy requested by client.
-// https://svelte.dev/docs/kit/adapter-node#Environment-variables-ORIGIN-PROTOCOL_HEADER-HOST_HEADER-and-PORT_HEADER
-sub vcl_backend_fetch {
-    set bereq.http.X-Forwarded-Host = "localhost";
-    set bereq.http.X-Forwarded-Port = "3000";
-    set bereq.http.X-Forwarded-Proto = "http";
-}
-
 sub vcl_synth {
     if (resp.status == 204) {
         set resp.http.Access-Control-Allow-Origin = "*";

@@ -44,14 +44,9 @@ COPY default.vcl.tmpl /etc/varnish/
 COPY *.vcl /etc/varnish/
 COPY includes /etc/varnish/includes
 
-# Set variables for *.tmpl files
-ARG PROXY_HOST=$PROXY_HOST
-ARG IMAGE_HOST=$IMAGE_HOST
-
-# Generate VCL
-RUN gomplate -f /etc/varnish/default.vcl.tmpl -o /etc/varnish/default.vcl
-RUN rm /etc/varnish/default.vcl.tmpl
+# Create entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 6081
-CMD ["varnishd", "-F", "-f", "/etc/varnish/default.vcl", "-a", ":6081", "-s", "malloc,512m"]
-
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
