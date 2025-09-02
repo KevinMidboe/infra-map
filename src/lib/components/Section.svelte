@@ -4,13 +4,15 @@
 </script>
 
 <article class="main-container">
-	<div class="header">
-		<div class="title">
-			<h2>{title}</h2>
-			<slot name="top-left" />
+	{#if title || description}
+		<div class="header">
+			<div class="title">
+				<h2>{title}</h2>
+				<slot name="top-left" />
+			</div>
+			<label>{description}</label>
 		</div>
-		<label>{description}</label>
-	</div>
+	{/if}
 
 	<slot></slot>
 </article>
