@@ -3,7 +3,7 @@
 	import { grey400x225 } from '$lib/utils/staticImageSource';
 	import Dialog from './Dialog.svelte';
 
-	const IMAGE_REFRESH_INTERVAL = 3000;
+	const IMAGE_REFRESH_INTERVAL = 1000;
 
 	let { imageUrl }: { imageUrl: string } = $props();
 	let lastUpdated = new Date();
