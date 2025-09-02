@@ -1,13 +1,7 @@
 <script lang="ts">
 	import External from '$lib/icons/external.svelte';
+	import type { Site } from '$lib/interfaces/site.ts';
 
-	interface Site {
-		title: string;
-		image: string;
-		link: string;
-		background?: string;
-		color?: string;
-	}
 
 	let { title, image, background, color, link }: Site = $props();
 
@@ -60,7 +54,7 @@
 		h2,
 		.link,
 		.title {
-			transition: all 0.2s ease-in-out;
+			transition: all 0.18s ease-in-out;
 		}
 
 		.title {
@@ -90,7 +84,8 @@
 		.image {
 			height: 8rem;
 			width: 100%;
-			margin: 1.2rem 0;
+			width: 8rem;
+			margin: 1.2rem auto; 
 			background-size: contain;
 			background-repeat: no-repeat;
 			background-position: center;
@@ -105,6 +100,7 @@
 			left: calc(100% - 2rem);
 			top: 0;
 			opacity: 0;
+			fill: var(--color);
 		}
 
 		@media screen and (max-width: 750px) {
@@ -130,7 +126,6 @@
 					opacity: 1;
 					left: calc(100% - 1rem);
 					top: 2px;
-					fill: var(--color);
 				}
 			}
 		}
