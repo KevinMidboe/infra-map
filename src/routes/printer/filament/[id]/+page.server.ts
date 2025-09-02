@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getFilamentByColor } from '$lib/server/database';
+import { getFilamentByColor } from '$lib/server/database/filament';
 
 export const load = async ({ params }: Parameters<PageServerLoad>[0]) => {
 	let { id } = params;

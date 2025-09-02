@@ -46,6 +46,7 @@
 	let open = $state(false);
 	let timeLeftInterval: ReturnType<typeof setInterval>;
 
+	console.log("got data:", data)
 	const rawFilament: Filament[] = data?.filament || [];
 	let filament = $derived(
 		rawFilament

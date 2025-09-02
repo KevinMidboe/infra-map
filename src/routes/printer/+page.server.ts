@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { fetchP1P } from '$lib/server/homeassistant';
-import { getAllFilament } from '$lib/server/database';
+import { getAllFilament } from '$lib/server/database/filament';
 import type { Filament } from '$lib/interfaces/printer';
 
 interface PrinterState {

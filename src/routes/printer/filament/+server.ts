@@ -1,4 +1,4 @@
-import { addFilament, updateFilament } from '$lib/server/database';
+import { addFilament, updateFilament } from '$lib/server/database/filament';
 import { json } from '@sveltejs/kit';
 
 export const PUT: RequestHandler = async ({ params, request }) => {
