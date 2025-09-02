@@ -77,7 +77,7 @@ export async function fetchP1P(): Promise<PrinterState> {
 		let hassStates = await fetchHassStates();
 
 		hassStates = hassStates.filter(
-			(el: Entity) => el.attributes.friendly_name?.includes('P1P') === true
+			(el: Entity) => el.attributes.friendly_name?.toLowerCase()?.includes('p1p') === true
 		);
 		return printerState(hassStates);
 	} catch (error) {
