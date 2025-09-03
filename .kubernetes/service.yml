@@ -9,7 +9,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      name: http
+      name: http-varnish
       protocol: TCP
       targetPort: 6081
   selector:
@@ -28,7 +28,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      name: http
+      name: http-app
       protocol: TCP
       targetPort: 3000
   selector:

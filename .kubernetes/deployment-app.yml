@@ -19,7 +19,16 @@ spec:
     spec:
       containers:
         - name: infra-map
-        - env:
+          image: ${IMAGE}
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 300m
+              memory: 828Mi
+            requests:
+              cpu: 250m
+              memory: 64Mi
+          env:
             - name: ORIGIN
               value: http://infra-map.infra-map.svc.cluster.local:3000
             - name: PROTOCOL_HEADER
@@ -33,17 +42,5 @@ spec:
           envFrom:
             - secretRef:
                 name: secret-env-values
-          image: ${IMAGE}
-          imagePullPolicy: IfNotPresent
-          resources:
-            limits:
-              cpu: 300m
-              memory: 828Mi
-            requests:
-              cpu: 250m
-              memory: 64Mi
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
       imagePullSecrets:
         - name: ghcr-login-secret
-      dnsPolicy: ClusterFirst
