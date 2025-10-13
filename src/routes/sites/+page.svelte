@@ -33,7 +33,7 @@
 
 {#if open}
 	<Dialog
-		on:close={() => (open = false)}
+		close={() => (open = false)}
 		title="Add new site"
 		description="You can select anything deployed in <b>Belgium (europe-west1) datacenter</b> and create an internal connection with your service."
 	>

@@ -22,7 +22,7 @@
 	columns={['Domain', 'SSL', 'Status', 'Code']}
 >
 	<tbody slot="tbody">
-		{#each httpHealth as row, i (row)}
+		{#each httpHealth as row (row)}
 			<tr>
 				<td>{row.domain}</td>
 				<td>
@@ -48,7 +48,7 @@
 </Table>
 
 {#if selectedSSL !== null}
-	<Dialog on:close={() => (selectedSSL = null)} title="SSL Certificate info">
+	<Dialog close={() => (selectedSSL = null)} title="SSL Certificate info">
 		<JsonViewer json={selectedSSL} />
 	</Dialog>
 {/if}

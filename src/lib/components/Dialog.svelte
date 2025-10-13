@@ -1,12 +1,17 @@
 <script lang="ts">
-	import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { clickOutside } from '$lib/utils/mouseEvents';
 
-	export let title: string;
-	export let description: string | null = null;
-
-	const dispatch = createEventDispatcher();
-	const close = () => dispatch('close');
+	interface Props {
+		title: string;
+		description: string | null;
+		close(): void
+	}
+	const {
+		title,
+		description,
+		close
+	}: Props = $props()
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
@@ -40,7 +45,7 @@
 	class="dialog"
 >
 	<div tabindex="-1" id="dialog-title" class="title">
-		{#if title.length || description.length}
+		{#if title.length || description?.length}
 			<header>
 				<button on:click={close} aria-disabled="false" aria-label="Close" type="button" tabindex="0"
 					><svg viewBox="0 0 24 24" aria-hidden="true" tabindex="-1" height="100%" width="100%"

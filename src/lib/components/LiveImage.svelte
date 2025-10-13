@@ -78,12 +78,12 @@
 	});
 </script>
 
-<div>
+<div class="liveimage">
 	{#if !fullscreen}
 		<img on:click={() => (fullscreen = !fullscreen)} src={String(imageSource)} id="live-image" />
 	{:else}
 		<div class="fullscreen-container">
-			<Dialog title="Live stream of printer" on:close={() => (fullscreen = false)}>
+			<Dialog title="Live stream of printer" close={() => (fullscreen = false)}>
 				<img style="width: 100%;" src={String(imageSource)} id="live-image" />
 				<span>Last update {timestamp}s ago</span>
 			</Dialog>
@@ -95,8 +95,9 @@
 </div>
 
 <style lang="scss">
-	img {
-		width: 400px;
+	.liveimage img {
+		width: 100%;
+		max-width: 400px;
 		border-radius: 0.5rem;
 	}
 

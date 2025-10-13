@@ -1,19 +1,135 @@
 <script lang="ts">
-	import { goto, pushState } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import { goto } from '$app/navigation';
 	import Dialog from './Dialog.svelte';
 	import Input from './Input.svelte';
+	import { allRoutes } from '$lib/remote/filesystem.remote.ts';
+	import type { PageRoute } from '$lib/remote/filesystem.remote.ts';
 
-	let open = $state(false);
+	type ShortcutHandler = (event: KeyboardEvent) => void;
+	interface Shortcut {
+		keys: string[];
+		handler: ShortcutHandler;
+		description?: string;
+	}
+
+	interface MinimalElement {
+		name: string;
+		link: string;
+	}
+
+	interface OverlayData {
+		type: 'elements' | 'pages' | null;
+		content: MinimalElement | unknown;
+	}
+
+	class KeyboardShortcutManager {
+		private shortcuts: Shortcut[] = [];
+
+		constructor() {
+			window.addEventListener('keydown', this.handleKeydown);
+		}
+
+		register(shortcut: Shortcut) {
+			this.shortcuts.push(shortcut);
+		}
+
+		unregisterAll() {
+			this.shortcuts = [];
+			window.removeEventListener('keydown', this.handleKeydown);
+		}
+
+		private handleKeydown = (event: KeyboardEvent) => {
+			const pressedKeys = [
+				event.metaKey ? 'Meta' : '',
+				event.ctrlKey ? 'Control' : '',
+				event.shiftKey ? 'Shift' : '',
+				event.altKey ? 'Alt' : '',
+				event.key.toUpperCase()
+			].filter(Boolean);
+
+			for (const shortcut of this.shortcuts) {
+				if (this.isMatch(shortcut.keys, pressedKeys)) {
+					event.preventDefault();
+					shortcut.handler(event);
+					return;
+				}
+			}
+
+			// some other key, but not overlay is not open. Nothing to do
+			if (!overlayStore.type) return;
+
+			// listen for text, any letter should reset focusIndex
+			const singleLetter = (event.key.length == 1 && event.key.match(/\D/)) || 0 > 0;
+			if (singleLetter) {
+				updateFocus(0);
+			}
+
+			// listen for number as shortcut actions
+			const digit = event.key.match(/\d/)?.[0];
+			if (digit?.length && digit?.length > 0) {
+				setTimeout(() => {
+					filterString = String(filterString)?.replaceAll(digit, '');
+				}, 1);
+
+				updateFocus(Number(digit) - 1);
+			}
+
+			// listen for arrow keys
+			if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+				const direction = event.key === 'ArrowDown' ? 1 : -1;
+				updateFocus(focusIndex + 1 * direction);
+			}
+
+			// listen for enter key
+			if (event.key === 'Enter' && filteredchildren.length > 0) {
+				const { link, path } = filteredchildren[focusIndex];
+				hideOverlay();
+				openElement(link || path);
+			}
+		};
+
+		private isMatch(shortcutKeys: string[], pressedKeys: string[]) {
+			return (
+				shortcutKeys.length === pressedKeys.length &&
+				shortcutKeys.every((key) => pressedKeys.includes(key))
+			);
+		}
+	}
+
+	let overlayStore: OverlayData = $state({ type: null, content: null });
+	let pages: Array<PageRoute> = $state([]);
+
+	function showOverlay(type: 'elements' | 'pages', content: unknown) {
+		if (type === overlayStore.type) return hideOverlay();
+
+		overlayStore = { type, content };
+		focusSearchInput();
+		filterString = '';
+		updateFocus(0);
+	}
+
+	function hideOverlay() {
+		overlayStore = { type: null, content: null };
+	}
+
+	async function resolvePages() {
+		pages = await allRoutes();
+	}
+
+	// call as soon as possible, even if blocking
+	resolvePages();
+
+	// setup managers
+	let manager: KeyboardShortcutManager;
 	const className = 'search-container';
 
-	/* search & filter */
+	// search & filter
 	let filterString = $state('');
 	let focusIndex = $state(0);
-	let children = $state([]);
 
 	let filteredchildren = $derived.by(() => {
-		return children.filter((a) => a?.name.toLowerCase().includes(filterString));
+		return overlayStore.content?.filter((a) => a?.name.toLowerCase().includes(filterString));
 	});
 
 	const updateFocus = (index: number) => {
@@ -25,12 +141,10 @@
 		focusIndex = index;
 	};
 
-	/* setup & register */
-	const toggleSearchDialog = () => (open = !open);
+	// setup & register
 	const focusSearchInput = () => {
 		setTimeout(() => {
 			const input = document.getElementsByClassName(className)[0]?.getElementsByTagName('input')[0];
-
 			input.focus();
 		}, 50);
 	};
@@ -43,64 +157,28 @@
 		}
 	}
 
-	function registerShortcutKey() {
-		document.addEventListener('keydown', function (event) {
-			// listen for open/close command + k
-			if ((event.metaKey && event.key === 'k') || (event.ctrlKey && event.key === 'k')) {
-				event.preventDefault();
-				console.log('Command + K / Ctrl + K was pressed');
-
-				toggleSearchDialog();
-
-				// initial state
-				if (open) {
-					focusSearchInput();
-					filterString = '';
-					updateFocus(0);
-					children = window?.elements || [{ name: 'empty' }];
-				}
-				return;
-			}
-
-			// listen for text, any letter should reset focusIndex
-			const singleLetter = (event.key.length == 1 && event.key.match(/\D/)) || 0 > 0;
-			if (open && singleLetter) {
-				updateFocus(0);
-			}
-
-			// listen for number as shortcut actions
-			const digit = event.key.match(/\d/)?.[0];
-			if (open && digit?.length && digit?.length > 0) {
-				setTimeout(() => {
-					filterString = String(filterString)?.replaceAll(digit, '');
-				}, 1);
-
-				updateFocus(Number(digit) - 1);
-			}
-
-			// listen for arrow keys
-			if (open && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
-				const direction = event.key === 'ArrowDown' ? 1 : -1;
-				updateFocus(focusIndex + 1 * direction);
-			}
-
-			// listen for enter key
-			if (open && event.key === 'Enter' && filteredchildren.length > 0) {
-				const { link } = filteredchildren[focusIndex];
-				toggleSearchDialog();
-
-				openElement(link);
+	onMount(() => {
+		manager = new KeyboardShortcutManager();
+		manager.register({
+			keys: ['Meta', 'K'],
+			handler: () => {
+				if (!window || !('elements' in window)) return;
+				const elements = window?.elements;
+				showOverlay('elements', elements);
 			}
 		});
-	}
 
-	onMount(() => {
-		registerShortcutKey();
+		manager.register({
+			keys: ['Meta', 'J'],
+			handler: () => showOverlay('pages', pages)
+		});
 	});
+
+	onDestroy(() => manager?.unregisterAll());
 </script>
 
-{#if open}
-	<Dialog on:close={() => (open = false)} title="" description="">
+{#if overlayStore.type}
+	<Dialog close={hideOverlay} title="" description="">
 		<div class={className}>
 			<Input label="" bind:value={filterString} placeholder="Search anything..." />
 
@@ -108,7 +186,7 @@
 				{#each filteredchildren as element, index (element)}
 					<li
 						class={index === focusIndex ? 'focus' : ''}
-						on:click={() => openElement(element?.link) ?? '/'}
+						on:click={() => 'link' in element && openElement(element.link ?? '/')}
 					>
 						<div class="header">
 							<h3>{element?.name}</h3>

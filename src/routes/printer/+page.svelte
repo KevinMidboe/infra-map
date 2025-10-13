@@ -247,7 +247,7 @@
 		</div>
 
 		<tbody slot="tbody">
-			{#each filament as row, i (row)}
+			{#each filament as row (row)}
 				<tr class="link" on:click={() => goto(filamentLink(row))}>
 					<td><span class="color" style={`background: ${row.hex}`} /></td>
 					<td class="info">
@@ -268,7 +268,7 @@
 
 {#if open}
 	<Dialog
-		on:close={() => (open = false)}
+		close={() => (open = false)}
 		title="Add new filament"
 		description="You can select anything deployed in <b>Belgium (europe-west1) datacenter</b> and create an internal connection with your service."
 	>
@@ -335,7 +335,6 @@
 		&.info {
 			display: table-cell;
 			vertical-align: middle;
-			padding-left: 25px;
 
 			h2 {
 				width: 100%;
