@@ -172,6 +172,7 @@ button.affirmative:hover span {
 /* dark mode button overrides */
 body.dark button span {
 	background-color: var(--theme);
+	color: var(--bg);
 }
 body.dark button.affirmative span {
 	color: var(--bg);

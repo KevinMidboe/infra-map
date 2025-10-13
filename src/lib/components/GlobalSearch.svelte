@@ -35,6 +35,14 @@
 		}, 50);
 	};
 
+	function openElement(link: string) {
+		if (String(link)?.startsWith('/')) {
+			goto(link);
+		} else {
+			window.open(link, '_blank');
+		}
+	}
+
 	function registerShortcutKey() {
 		document.addEventListener('keydown', function (event) {
 			// listen for open/close command + k
@@ -81,11 +89,7 @@
 				const { link } = filteredchildren[focusIndex];
 				toggleSearchDialog();
 
-				if (String(link)?.startsWith('/')) {
-					goto(link);
-				} else {
-					window.open(link, '_blank');
-				}
+				openElement(link);
 			}
 		});
 	}
@@ -96,16 +100,22 @@
 </script>
 
 {#if open}
-	<Dialog on:close={() => (open = false)} title="Search on page" description="">
+	<Dialog on:close={() => (open = false)} title="" description="">
 		<div class={className}>
-			<Input label="" bind:value={filterString} placeholder="attribute" />
+			<Input label="" bind:value={filterString} placeholder="Search anything..." />
 
 			<ul>
 				{#each filteredchildren as element, index (element)}
-					<li class={index === focusIndex ? 'focus' : ''}>
-						<h3>{element?.name}</h3>
+					<li
+						class={index === focusIndex ? 'focus' : ''}
+						on:click={() => openElement(element?.link) ?? '/'}
+					>
+						<div class="header">
+							<h3>{element?.name}</h3>
+							<span class="sub">{element?.link}</span>
+						</div>
 
-						<div>
+						<div class="group">
 							{#each Object.entries(element) as [key, value] (key)}
 								<span><b>{key}:</b> {value}</span>
 							{/each}
@@ -113,11 +123,31 @@
 					</li>
 				{/each}
 			</ul>
+
+			<div class="hint">
+				Press <span class="kbd">Esc</span> to close · <span class="kbd">⌘</span> +
+				<span class="kbd">K</span> to toggle
+			</div>
 		</div>
 	</Dialog>
 {/if}
 
 <style lang="scss">
+	:global(.dialog .title) {
+		--padding: 1.2rem;
+		--background-color: rgba(255, 255, 255, 0.92);
+		--text-color: black;
+	}
+
+	:global(body.dark .dialog .title) {
+		--background-color: rgba(25, 25, 34, 0.92);
+		--text-color: white;
+	}
+
+	:global(.dialog .title .input) {
+		--padding-w: 1rem;
+	}
+
 	.search-container {
 		width: 700px;
 		position: relative;
@@ -132,6 +162,8 @@
 
 		ul {
 			list-style-type: none;
+			margin: 0;
+			margin-top: 0.3rem;
 			padding-left: 0;
 			overflow-y: scroll;
 			overflow-y: scroll;
@@ -140,19 +172,28 @@
 		}
 
 		li {
+			--blur: 18px;
 			border: var(--border);
 			border-radius: var(--border-radius);
-			padding: 1rem;
-			margin: 0.5rem 0;
+
 			position: relative;
+			display: flex;
+			flex-direction: column;
+			transition: background 0.15s;
+			padding: 0.875rem 1rem;
+			margin: 0.5rem 0;
+			background-color: var(--card-bg);
+
 			cursor: pointer;
+			user-select: none;
+			gap: 0.375rem;
 
 			&.focus,
 			&:hover {
 				&::after {
 					content: '';
 					position: absolute;
-					width: calc(100% - 2px);
+					width: calc(100% - 4px);
 					height: calc(100% - 2px);
 					border: 2px solid var(--theme);
 					top: -1px;
@@ -161,18 +202,59 @@
 				}
 			}
 
-			h3 {
-				margin: 0;
-				text-align: center;
-				font-size: 2rem;
+			.header {
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				margin-bottom: 0.5rem;
+
+				h3 {
+					font-weight: 600;
+					font-size: 1.1rem;
+					letter-spacing: 0.2px;
+					margin: 0;
+				}
+
+				.sub {
+					color: #999;
+					font-size: 13px;
+					font-family: monospace;
+				}
 			}
 
-			div {
-				margin-top: 0.5rem;
+			.group {
 				display: flex;
 				flex-wrap: wrap;
-				column-gap: 1rem;
-				row-gap: 0.1rem;
+				gap: 0.625rem 1.125rem;
+				margin-top: 0.25rem;
+				font-size: 0.8rem;
+				font-size: 13px;
+				color: var(--muted);
+
+				span {
+					display: inline-flex;
+					gap: 4px;
+
+					b {
+						color: var(--key);
+						font-weight: 400;
+					}
+				}
+			}
+		}
+
+		/* Small footer hint */
+		.hint {
+			margin-top: 10px;
+			text-align: right;
+			color: var(--muted);
+			font-size: 13px;
+
+			.kbd {
+				background-color: rgba(0, 0, 0, 0.16);
+				padding: 2px 6px;
+				border-radius: 4px;
+				font-size: 12px;
 			}
 		}
 	}

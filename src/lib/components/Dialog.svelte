@@ -40,16 +40,18 @@
 	class="dialog"
 >
 	<div tabindex="-1" id="dialog-title" class="title">
-		<header>
-			<button on:click={close} aria-disabled="false" aria-label="Close" type="button" tabindex="0"
-				><svg viewBox="0 0 24 24" aria-hidden="true" tabindex="-1" height="100%" width="100%"
-					><path
-						d="M6.909 5.636a.9.9 0 1 0-1.273 1.273l5.091 5.09-5.091 5.092a.9.9 0 0 0 1.273 1.273L12 13.273l5.091 5.09a.9.9 0 1 0 1.273-1.272L13.273 12l5.09-5.091a.9.9 0 1 0-1.272-1.273L12 10.727z"
-					></path></svg
-				>
-			</button>
-			<h5>{title}</h5>
-		</header>
+		{#if title.length || description.length}
+			<header>
+				<button on:click={close} aria-disabled="false" aria-label="Close" type="button" tabindex="0"
+					><svg viewBox="0 0 24 24" aria-hidden="true" tabindex="-1" height="100%" width="100%"
+						><path
+							d="M6.909 5.636a.9.9 0 1 0-1.273 1.273l5.091 5.09-5.091 5.092a.9.9 0 0 0 1.273 1.273L12 13.273l5.091 5.09a.9.9 0 1 0 1.273-1.272L13.273 12l5.09-5.091a.9.9 0 1 0-1.272-1.273L12 10.727z"
+						></path></svg
+					>
+				</button>
+				<h5>{title}</h5>
+			</header>
+		{/if}
 
 		<main>
 			{#if description}
@@ -113,8 +115,11 @@
 
 	.title {
 		--padding: 1rem;
+		--background-color: #ffffff;
+		--text-color: black;
 		position: relative;
-		background-color: #ffffff;
+		background-color: var(--background-color);
+		color: var(--text-color);
 		background-clip: padding-box;
 		border-radius: 12px;
 		display: flex;

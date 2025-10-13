@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import CubeSide from '$lib/icons/cube-side.svelte';
 	import HardDrive from '$lib/icons/hard-disk.svelte';
-	import Network from '$lib/icons/Network.svelte';
+	import Network from '$lib/icons/network.svelte';
 	import CPU from '$lib/icons/cpu.svelte';
 	import Fingerprint from '$lib/icons/fingerprint.svelte';
 	import ExtractUp from '$lib/icons/extract-up.svelte';
