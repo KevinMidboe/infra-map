@@ -57,15 +57,64 @@ async function getClusterInfo() {
 		});
 }
 
+export async function vmInfo(nodeName: string, vmId: string) {
+	const r = buildProxmoxRequest();
+	r.url += `nodes/${nodeName}/qemu/${vmId}/config`;
+
+	return fetch(r.url, r?.options)
+		.then(resp => resp.json())
+		.then((response) => response.data)
+}
+
+export async function vmCloudInit(nodeName: string, vmId: string) {
+	const r = buildProxmoxRequest();
+	vmId = 121
+	r.url += `nodes/${nodeName}/qemu/${vmId}/cloudinit`;
+
+	return fetch(r.url, r?.options)
+		.then(resp => resp.json())
+		.then((response) => response.data)
+}
+
+export async function vmAgentOS(nodeName: string, vmId: string) {
+	const r = buildProxmoxRequest();
+	vmId = 121
+	r.url += `nodes/${nodeName}/qemu/${vmId}/agent/get-osinfo`;
+
+	return fetch(r.url, r?.options)
+		.then(resp => resp.json())
+		.then((response) => response.data?.result)
+}
+
+export async function vmAgentFS(nodeName: string, vmId: string) {
+	const r = buildProxmoxRequest();
+	vmId = 121
+	r.url += `nodes/${nodeName}/qemu/${vmId}/agent/get-fsinfo`;
+
+	return fetch(r.url, r?.options)
+		.then(resp => resp.json())
+		.then((response) => response.data?.result)
+}
+
+export async function vmAgentNetwork(nodeName: string, vmId: string) {
+	const r = buildProxmoxRequest();
+	vmId = 121
+	r.url += `nodes/${nodeName}/qemu/${vmId}/agent/network-get-interfaces`;
+
+	return fetch(r.url, r?.options)
+		.then(resp => resp.json())
+		.then((response) => response.data?.result)
+}
+
 export async function fetchNodes(): Promise<{ nodes: Node[]; cluster: Cluster | null }> {
 	try {
 		const { nodes, cluster } = await getClusterInfo();
 
-		const infoP = Promise.all(nodes.map((node: Node) => fetchNodeInfo(node)));
-		const vmsP = Promise.all(nodes.map((node: Node) => fetchNodeVMs(node)));
-		const lxcsP = Promise.all(nodes.map((node: Node) => fetchNodeLXCs(node)));
+		const infoBulk = Promise.all(nodes.map((node: Node) => fetchNodeInfo(node)));
+		const vmsBulk = Promise.all(nodes.map((node: Node) => fetchNodeVMs(node)));
+		const lxcsBulk = Promise.all(nodes.map((node: Node) => fetchNodeLXCs(node)));
 
-		const [info, vms, lxcs] = await Promise.all([infoP, vmsP, lxcsP]);
+		const [info, vms, lxcs] = await Promise.all([infoBulk, vmsBulk, lxcsBulk]);
 
 		return {
 			cluster,

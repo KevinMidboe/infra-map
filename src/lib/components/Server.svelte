@@ -24,7 +24,7 @@
 			link: `https://${node.ip}:8006/#v1:0:=node%2F${node.name}:4:=jsconsole::::::`
 		},
 		{ name: 'Graphs', link: `https://${node.ip}:8006/#v1:0:=node%2F${node.name}:4:5::::::` },
-		{ name: 'Web', link: `https://${node.ip}:8006/` }
+		{ name: 'Details', link: `/servers/node/${node.name}` }
 	];
 
 	let { cpuinfo, memory, uptime, loadavg } = node.info;
@@ -116,7 +116,7 @@
 
 	<div class="footer">
 		{#each buttons as btn (btn)}
-			<a href={btn.link} target="_blank" rel="noopener noreferrer">
+			<a href={btn.link} target={btn.link[0] === '/' ? '' : '_blank'} rel="noopener noreferrer">
 				<button>
 					<span>{btn.name}</span>
 				</button>

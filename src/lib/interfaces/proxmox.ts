@@ -66,6 +66,45 @@ interface NodeStatus {
 	bootInfo: BootInfo;
 }
 
+export interface VM {
+	cpu: number;
+	cpus: number;
+	disk: number;
+	diskread: number;
+	diskwrite: number;
+	maxdisk: number;
+	maxmem: number;
+	mem: number;
+	name: string;
+	netin: number;
+	netout: number;
+	pid: number;
+	status: string;
+	uptime: number;
+	vmid: number;
+}
+
+export interface LXC {
+	cpu: number;
+	cpus: number;
+	disk: number;
+	diskread: number;
+	diskwrite: number;
+	maxdisk: number;
+	maxmem: number;
+	maxswap: number;
+	mem: number;
+	name: string;
+	netin: number;
+	netout: number;
+	pid: number;
+	status: string;
+	swap: number;
+	type: string;
+	uptime: number;
+	vmid: number;
+}
+
 export interface Node {
 	info: NodeStatus;
 	online: number;
