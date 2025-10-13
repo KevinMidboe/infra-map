@@ -4,10 +4,10 @@
 	import { clickOutside } from '$lib/utils/mouseEvents';
 
 	export let options = ['Today', 'Yesterday', 'Last 7 Days', 'Last 30 Days', 'All time'];
-	export let selected;
+	export let selected: string | undefined = undefined;
 	export let placeholder = '';
 	export let label = '';
-	export let icon = undefined;
+	export let icon: unknown = undefined;
 	export let required = false;
 
 	let dropdown: Element;
@@ -29,9 +29,7 @@
 	}
 
 	function handleClick(event: MouseEvent) {
-		console.log('dropdown element:', dropdown);
 		const outside = clickOutside(event, dropdown);
-		console.log('click outside:', outside);
 		if (outside === false) {
 			return;
 		}
