@@ -55,7 +55,7 @@
 
 	.description {
 		font-size: 0.875rem;
-		color: #666;
+		opacity: 0.6;
 		margin-bottom: 12px;
 	}
 

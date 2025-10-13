@@ -33,6 +33,10 @@
 </div>
 
 <style lang="scss">
+	:global(body.dark .label-input .input) {
+		background: var(--highlight);
+	}
+
 	.label-input {
 		width: 100%;
 
@@ -54,8 +58,9 @@
 		.input {
 			position: relative;
 			display: flex;
-			--padding: 0.75rem;
-			width: calc(100% - (var(--padding) * 2));
+			--padding-h: 0.25rem;
+			--padding-w: 0.75rem;
+			width: calc(100% - (var(--padding-w) * 2));
 			height: 2.5rem;
 			background: #ffffff;
 			align-items: center;
@@ -66,7 +71,7 @@
 			outline: none;
 			display: flex;
 			align-items: center;
-			padding: 0px var(--padding);
+			padding: var(--padding-h) var(--padding-w);
 
 			&.focus {
 				box-shadow: 0px 0px 0px 4px #7d66654d;

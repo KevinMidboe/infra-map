@@ -66,7 +66,7 @@
 
 <PageHeader>Welcome to schleppe.cloud infra overview</PageHeader>
 
-<p>
+<p class="site-desc">
 	This site is a local-first dashboard for monitoring the state of digital and physical tools in a
 	workshop environment. It currently tracks servers (IP, cores, memory, uptime), 3D printers
 	(status, history, filament stock), and other connected devices. Each device or system has its own
@@ -74,7 +74,7 @@
 	general monitoring tools, IoT integrations, and project overviews.
 </p>
 
-<p>
+<p class="site-desc">
 	The system is intended for hybrid spaces where digital infrastructure coexists with hands-on work.
 	Alongside real-time monitoring, Schleppe is expanding to reflect the broader physical
 	workspace—covering areas like tool usage, material stocks, and workstations for welding,
@@ -96,16 +96,21 @@
 </div>
 
 <style lang="scss">
-	p {
+	p.site-desc {
 		font-size: 1.1rem;
 		line-height: 1.4;
 		line-height: 1.7;
 		color: #333;
 
-		background-color: #fafafa; /* Subtle background to separate it from the rest */
+		background-color: #fafafa;
 		padding: 2rem;
 		border-radius: 1rem; /* Soft edges */
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Light shadow for depth */
+	}
+
+	:global(body.dark p.site-desc) {
+		background-color: var(--highlight);
+		color: var(--color);
 	}
 
 	.shortcut-grid {

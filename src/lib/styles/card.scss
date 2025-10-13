@@ -28,15 +28,23 @@
 }
 
 .card {
-	background: #fbf6f4;
-	box-shadow: var(
-		--str-shadow-s,
+	box-shadow:
 		0px 0px 2px #22242714,
 		0px 1px 4px #2224271f,
-		0px 4px 8px #22242729
-	);
+		0px 4px 8px #22242729;
 	pointer-events: all;
 	cursor: auto;
+}
+
+:global(body.dark .card) {
+	box-shadow:
+		0px 0px 2px #eaddd514,
+		0px 1px 4px #eaddd515,
+		0px 4px 6px #eaddd520;
+}
+
+:global(body.dark .card .header, body.dark .card .footer) {
+	background-color: var(--highlight);
 }
 
 .header {
@@ -54,7 +62,7 @@
 
 	.subtle {
 		margin-left: 0.25rem;
-		color: rgba(0, 0, 0, 0.4);
+		opacity: 0.4;
 		font-weight: 500;
 		font-size: 0.9rem;
 	}

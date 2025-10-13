@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
+	import DarkmodeToggle from '$lib/components/DarkmodeToggle.svelte';
 	import GlobalSearch from '$lib/components/GlobalSearch.svelte';
 </script>
 
@@ -15,6 +16,7 @@
 		</main>
 	</div>
 
+	<DarkmodeToggle />
 	<GlobalSearch />
 </div>
 

@@ -46,7 +46,7 @@
 		background: var(--theme);
 		padding: 0 1rem;
 		border-radius: 6px;
-		color: white;
+		color: var(--bg);
 		margin: 1rem 0.5rem 0 0.5rem;
 		font-weight: 400;
 		font-size: 1rem;
@@ -66,7 +66,7 @@
 			font-size: 1.5rem;
 			padding: 0;
 			font-weight: 300;
-			color: white !important;
+			color: var(--bg) !important;
 		}
 
 		img {

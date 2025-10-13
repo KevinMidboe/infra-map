@@ -105,6 +105,8 @@
 </div>
 
 <style lang="scss">
+	@import "../styles/card.scss";
+
 	.card-container {
 		background-color: #cab2aa40;
 		border-radius: 0.5rem;
@@ -121,100 +123,5 @@
 			grid-template-columns: repeat(3, 1fr);
 			gap: 2rem;
 		}
-	}
-
-	.card {
-		flex-grow: 1;
-		max-width: 550px;
-
-		background: #fbf6f4;
-		box-shadow: var(
-			--str-shadow-s,
-			0px 0px 2px #22242714,
-			0px 1px 4px #2224271f,
-			0px 4px 8px #22242729
-		);
-		pointer-events: all;
-		cursor: auto;
-
-		&.not-running {
-			border: 2px dashed var(--theme);
-			opacity: 0.6;
-		}
-	}
-
-	.header {
-		display: flex;
-		padding: 0.75rem;
-		background-color: white;
-		align-items: center;
-		font-size: 16px;
-
-		.icon {
-			height: 24px;
-			width: 24px;
-			margin-right: 0.75rem;
-		}
-
-		.status {
-			height: 1rem;
-			width: 1rem;
-			border-radius: 50%;
-			margin-left: auto;
-			position: relative;
-
-			&.ok {
-				background-color: var(--positive);
-			}
-			&.warning {
-				background-color: var(--warning);
-			}
-			&.error {
-				background-color: var(--negative);
-			}
-		}
-	}
-
-	.footer {
-		padding: 0.5rem;
-		background-color: white;
-	}
-
-	.resource {
-		display: grid;
-		grid-template-columns: auto auto;
-		padding: 0.5rem;
-		background-color: var(--bg);
-
-		row-gap: 6px;
-		column-gap: 20px;
-
-		> div,
-		span {
-			display: flex;
-			padding: 0 0.5rem;
-		}
-	}
-
-	:global(.resource .title svg) {
-		height: 1rem;
-		width: 1rem;
-	}
-
-	.footer {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-
-		margin-top: auto;
-		background: white;
-		padding: 0.5rem;
-		border-bottom-left-radius: 0.25rem;
-		border-bottom-right-radius: 0.25rem;
-	}
-
-	.positive {
-		color: #077c35;
 	}
 </style>

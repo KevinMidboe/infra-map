@@ -43,6 +43,34 @@
 
 	--border: 1px solid #eaddd5;
 	--border-radius: 0.75rem;
+
+	--card-bg: rgba(255, 255, 255, 0.7);
+	--key: #6e80d6;
+	--muted: #7a6d6e;
+}
+
+body.dark {
+	--bg: #121010;
+	--color: #f4eeeb;
+	--highlight: #2b2325;
+	--theme: #eaddd5;
+
+	--positive: #3ddc84;
+	--negative: #ff6b63;
+	--warning: #ffb74d;
+	--pulse-positive: rgba(61, 220, 132, 0.6);
+	--pulse-negative: rgba(255, 107, 99, 0.6);
+	--pulse-warning: rgba(255, 183, 77, 0.6);
+
+	--border: 1px solid #2b2325;
+
+	--key: #9fb3ff;
+	--muted: #b0b0b0;
+	--card-bg: #303037;
+}
+
+svg {
+	fill: var(--color);
 }
 
 body {
@@ -54,6 +82,9 @@ body {
 	background-color: var(--bg);
 	color: var(--color);
 	font-size: 14px;
+	transition:
+		background 0.3s ease,
+		color 0.3s ease;
 }
 
 a,
@@ -99,6 +130,7 @@ button {
 	border: none;
 	position: relative;
 	background: transparent;
+	color: var(--color);
 	height: 100%;
 	border-radius: 0.5rem;
 	display: inline-block;
@@ -135,6 +167,20 @@ button.affirmative:hover span {
 	color: var(--theme);
 	border-color: var(--theme);
 	background-color: var(--highlight);
+}
+
+/* dark mode button overrides */
+body.dark button span {
+	background-color: var(--theme);
+}
+body.dark button.affirmative span {
+	color: var(--bg);
+}
+
+body.dark button.affirmative:hover span {
+	color: var(--color);
+	background-color: var(--highlight);
+	border-color: var(--bg);
 }
 
 button:disabled {
@@ -194,7 +240,7 @@ table tr:not(table tr:last-of-type) {
 
 table tr:hover > td {
 	background-color: var(--highlight);
-	background-color: #f5ede9;
+	background-color: var(--bg);
 }
 
 table tr.link {
@@ -211,6 +257,10 @@ table tr.link {
 	@media screen and (max-width: 750px) {
 		padding: 0.5rem;
 	}
+}
+
+body.dark .main-container {
+	background: var(--highlight) !important;
 }
 
 .section-wrapper {
