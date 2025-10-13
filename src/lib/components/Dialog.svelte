@@ -52,11 +52,11 @@
 		</header>
 
 		<main>
-			<div id="dialog-description">
-				{#if description}
+			{#if description}
+				<div id="dialog-description">
 					{@html description}
-				{/if}
-			</div>
+				</div>
+			{/if}
 
 			<!--
 			<div class="alerts">
@@ -83,6 +83,8 @@
 		align-items: flex-start;
 		justify-content: center;
 		position: fixed;
+		--offset-top: 4rem;
+		padding-top: var(--offset-top);
 		top: 0;
 		right: 0;
 		bottom: 0;
@@ -96,11 +98,16 @@
 			visibility 0.4s ease;
 		visibility: visible;
 		opacity: 1;
-		align-items: center;
+
+		@media screen and (max-width: 480px) {
+			padding: 1rem;
+			width: calc(100vw - 2rem);
+			height: calc(100vh - 2rem);
+		}
 
 		> div {
 			max-width: 880px;
-			max-width: unset;
+			// max-width: unset;
 		}
 	}
 
@@ -123,7 +130,6 @@
 			0 6px 16px 0 rgba(0, 0, 0, 0.08),
 			0 9px 28px 8px rgba(0, 0, 0, 0.05);
 		pointer-events: auto;
-		max-height: 90vh;
 		padding: var(--padding);
 		width: calc(880px - calc(--padding * 2));
 		z-index: 2008;

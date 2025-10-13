@@ -115,4 +115,6 @@ export interface Node {
 	type: string;
 	ip: string;
 	level: string;
+	vms: Array<VM>;
+	lxcs: Array<LXC>;
 }

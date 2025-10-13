@@ -21,8 +21,6 @@
 	let nodes = $derived(rawNodes.filter((n) => n.metadata.name.includes(filterLC)));
 
 	onMount(() => {
-		console.log(deployments);
-
 		window.elements = deployments
 			.map((d) => {
 				return {

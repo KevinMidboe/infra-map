@@ -10,7 +10,9 @@
 				<h2>{title}</h2>
 				<slot name="top-left" />
 			</div>
-			<label>{description}</label>
+			{#if description && description?.length > 0}
+				<label>{description}</label>
+			{/if}
 		</div>
 	{/if}
 

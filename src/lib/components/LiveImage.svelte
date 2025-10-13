@@ -21,8 +21,8 @@
 
 			imageSource = reader?.result || '';
 			if (imageSource === '') {
-				console.log("no image data, returning")
-				return
+				console.log('no image data, returning');
+				return;
 			}
 
 			// set imageSource to image element
@@ -82,12 +82,14 @@
 	{#if !fullscreen}
 		<img on:click={() => (fullscreen = !fullscreen)} src={String(imageSource)} id="live-image" />
 	{:else}
-		<Dialog title="Live stream of printer" on:close={() => (fullscreen = false)}>
-			<img style="width: 100%;" src={String(imageSource)} id="live-image" />
-			<span>Last update {timestamp}s ago</span>
-		</Dialog>
+		<div class="fullscreen-container">
+			<Dialog title="Live stream of printer" on:close={() => (fullscreen = false)}>
+				<img style="width: 100%;" src={String(imageSource)} id="live-image" />
+				<span>Last update {timestamp}s ago</span>
+			</Dialog>
 
-		<img src={String(grey400x225)} />
+			<img src={String(grey400x225)} />
+		</div>
 	{/if}
 	<span>Last update {timestamp}s ago</span>
 </div>
@@ -100,5 +102,9 @@
 
 	span {
 		display: block;
+	}
+
+	:global(.fullscreen-container .dialog > div) {
+		max-width: unset;
 	}
 </style>

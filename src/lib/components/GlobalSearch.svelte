@@ -101,7 +101,7 @@
 			<Input label="" bind:value={filterString} placeholder="attribute" />
 
 			<ul>
-				{#each filteredchildren as element, index (element?.name)}
+				{#each filteredchildren as element, index (element)}
 					<li class={index === focusIndex ? 'focus' : ''}>
 						<h3>{element?.name}</h3>
 
