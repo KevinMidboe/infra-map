@@ -5,15 +5,17 @@
 	import FormSite from '$lib/components/forms/FormSite.svelte';
 	import ThumbnailButton from '$lib/components/ThumbnailButton.svelte';
 	import type { Site } from '$lib/interfaces/site.ts';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: { site: Site } } = $props();
 	let open = $state(false);
 
 	const { sites } = data;
+
+	onMount(() => window.elements = sites)
 </script>
 
 <PageHeader>Sites
-
 			<button class="add-site-btn affirmative" on:click={() => (open = true)}><span>Add new site</span></button>
 </PageHeader>
 

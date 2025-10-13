@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Node from '$lib/components/Node.svelte';
 	import Deploy from '$lib/components/Deploy.svelte';
 	import Daemon from '$lib/components/Daemon.svelte';
@@ -14,10 +15,24 @@
 	const rawDaemons: V1DaemonSet[] = data?.daemons;
 	const rawNodes: V1Node[] = data?.nodes;
 
-	let filterLC = $derived(filterValue.toLowerCase())
+	let filterLC = $derived(filterValue.toLowerCase());
 	let deployments = $derived(rawDeployments.filter((d) => d.metadata.name.includes(filterLC)));
 	let daemons = $derived(rawDaemons.filter((d) => d.metadata.name.includes(filterLC)));
 	let nodes = $derived(rawNodes.filter((n) => n.metadata.name.includes(filterLC)));
+
+	onMount(() => {
+		console.log(deployments);
+
+		window.elements = deployments
+			.map((d) => {
+				return {
+					name: d.metadata?.name || undefined,
+					link: `/cluster/deployment/${d.metadata?.uid}`,
+					...d
+				};
+			})
+			.filter((d) => d.name);
+	});
 </script>
 
 <PageHeader>Cluster overview</PageHeader>

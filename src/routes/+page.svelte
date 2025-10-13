@@ -1,6 +1,7 @@
 <script lang="ts">
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import PageElement from '$lib/components/PageElement.svelte';
+	import { onMount } from 'svelte';
 
 	let elems = [];
 	let counter = 0;
@@ -28,10 +29,10 @@
 		return {
 			bgColor: colors[counter - 1][0],
 			color: colors[counter - 1][1],
-			title,
+			name: title,
 			header: null,
 			description: description ? description : '',
-			link: title
+			link: `/${title}`
 		};
 	}
 
@@ -59,6 +60,8 @@
 
 	elems = elems.concat(createPageElement('cluster '));
 	elems = elems.concat(createPageElement('health '));
+
+	onMount(() => window.elements = elems)
 </script>
 
 <PageHeader>Welcome to schleppe.cloud infra overview</PageHeader>
@@ -80,11 +83,11 @@
 </p>
 
 <div class="shortcut-grid">
-	{#each elems as shortcut (shortcut.title)}
+	{#each elems as shortcut (shortcut.name)}
 		<PageElement
 			bgColor={shortcut.bgColor}
 			color={shortcut.color}
-			title={shortcut.title}
+			title={shortcut.name}
 			header={shortcut.header}
 			description={shortcut.description}
 			link={shortcut.link}
