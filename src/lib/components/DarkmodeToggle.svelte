@@ -10,15 +10,22 @@
     return false;
   }
 
+	function updateBodyClass() {
+    document.body.className = darkmode ? "dark" : "light";
+	}
+
   let darkmode = $state(false);
 	const darkmodeToggleIcon = $derived(darkmode ? "🌝" : "🌚");
 
   function toggleDarkmode() {
     darkmode = !darkmode;
-    document.body.className = darkmode ? "dark" : "light";
+		updateBodyClass()
   }
 
-	onMount(() => darkmode = systemDarkModeEnabled())
+	onMount(() => {
+		darkmode = systemDarkModeEnabled()
+		updateBodyClass()
+	})
 </script>
 
   <div class="darkToggle">

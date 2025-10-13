@@ -28,7 +28,9 @@
 	font-style: normal;
 }
 
-:root {
+:root,
+.light {
+	color-scheme: light;
 	--bg: #f9f5f3;
 	--color: #1c1819;
 	--highlight: #eaddd5;
@@ -47,6 +49,29 @@
 	--card-bg: rgba(255, 255, 255, 0.7);
 	--key: #6e80d6;
 	--muted: #7a6d6e;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: light dark;
+		--bg: #121010;
+		--color: #f4eeeb;
+		--highlight: #2b2325;
+		--theme: #eaddd5;
+
+		--positive: #3ddc84;
+		--negative: #ff6b63;
+		--warning: #ffb74d;
+		--pulse-positive: rgba(61, 220, 132, 0.6);
+		--pulse-negative: rgba(255, 107, 99, 0.6);
+		--pulse-warning: rgba(255, 183, 77, 0.6);
+
+		--border: 1px solid #2b2325;
+
+		--key: #9fb3ff;
+		--muted: #b0b0b0;
+		--card-bg: #303037;
+	}
 }
 
 body.dark {
