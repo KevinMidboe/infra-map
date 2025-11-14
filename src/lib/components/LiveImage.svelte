@@ -84,7 +84,7 @@
 	{:else}
 		<div class="fullscreen-container">
 			<Dialog title="Live stream of printer" close={() => (fullscreen = false)}>
-				<img style="width: 100%;" src={String(imageSource)} id="live-image" />
+				<img src={String(imageSource)} id="live-image" />
 				<span>Last update {timestamp}s ago</span>
 			</Dialog>
 
@@ -105,7 +105,11 @@
 		display: block;
 	}
 
-	:global(.fullscreen-container .dialog > div) {
+	:global(.fullscreen-container .dialog img) {
 		max-width: unset;
+	}
+
+	:global(.fullscreen-container #dialog-title) {
+		max-width: 98vw;
 	}
 </style>
