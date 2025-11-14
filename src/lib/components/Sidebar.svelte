@@ -173,6 +173,19 @@
 		}
 	}
 
+	:global(body.dark .nav-wrapper.open) {
+				@media (prefers-color-scheme: dark) {
+					background-color: var(--bg);
+
+					nav a {
+						&:hover,
+						&.highlight {
+							color: white !important;
+						}
+					}
+				}
+	}
+
 	nav {
 		display: flex;
 		flex-direction: column;
