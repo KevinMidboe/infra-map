@@ -8,14 +8,6 @@
 
 		return segments.map((segment, index) => {
 			let label = decodeURI(segment);
-
-			// if not uuid pattern, this is weird order of ops
-			/*
-			if (!segment.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
-				label = label.replace(/-/g, ' ')
-			}
-			*/
-
 			return {
 				label,
 				path: '/' + segments.slice(0, index + 1).join('/')
@@ -26,8 +18,10 @@
 
 <div class="header">
 	<div class="left">
-		<!-- <img src="/logo.png" /> -->
-		<h1>schleppe.cloud</h1>
+		<a href="/">
+			<!-- <img src="/logo.png" /> -->
+			<h1>schleppe.cloud</h1>
+		</a>
 	</div>
 
 	<div class="middle crumbs">
@@ -36,10 +30,6 @@
 			<span class="seperator">/</span>
 			<a href={crumb.path}>{crumb.label}</a>
 		{/each}
-	</div>
-
-	<div class="right">
-		<span>User profile</span>
 	</div>
 </div>
 
@@ -50,19 +40,19 @@
 		left: 0;
 
 		display: grid;
-		grid-template-columns: 240px 1fr auto;
+		grid-template-columns: 200px 1fr auto;
 		grid-template-areas: 'logoSection siteAndEnvironment profileAndHelp';
 		align-items: center;
-		background: #1c1819;
+		background: var(--theme);
 		padding: 0 1rem;
 		border-radius: 6px;
-		color: white;
+		color: var(--bg);
 		margin: 1rem 0.5rem 0 0.5rem;
 		font-weight: 400;
 		font-size: 1rem;
 		z-index: 100;
 
-		&::after {
+		&::before {
 			content: '';
 			position: absolute;
 			width: 100%;
@@ -76,6 +66,7 @@
 			font-size: 1.5rem;
 			padding: 0;
 			font-weight: 300;
+			color: var(--bg) !important;
 		}
 
 		img {
@@ -100,10 +91,11 @@
 		}
 
 		.crumbs {
-			margin-left: 0.6rem;
+			margin-left: 2rem;
 
 			li {
 				display: block;
+				cursor: pointer;
 			}
 
 			.seperator {
@@ -111,5 +103,20 @@
 				padding: 0 0.75rem;
 			}
 		}
+
+		@media screen and (max-width: 750px) {
+			top: -0.25rem;
+			overflow: scroll;
+
+			.crumbs {
+				margin-left: 0;
+			}
+		}
+	}
+
+	:global(.right svg) {
+		height: 1.5rem;
+		width: 1.5rem;
+		fill: white;
 	}
 </style>

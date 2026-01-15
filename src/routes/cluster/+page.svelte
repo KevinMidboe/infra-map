@@ -1,19 +1,43 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Node from '$lib/components/Node.svelte';
 	import Deploy from '$lib/components/Deploy.svelte';
 	import Daemon from '$lib/components/Daemon.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
+	import Input from '$lib/components/Input.svelte';
 	import type { PageData } from './$types';
 	import type { V1DaemonSet, V1Deployment, V1Node } from '@kubernetes/client-node';
 
 	let { data }: { data: PageData } = $props();
+	let filterValue = $state('');
 
-	const deployments: V1Deployment[] = data?.deployments;
-	const daemons: V1DaemonSet[] = data?.daemons;
-	const nodes: V1Node[] = data?.nodes;
+	const rawDeployments: V1Deployment[] = data?.deployments;
+	const rawDaemons: V1DaemonSet[] = data?.daemons;
+	const rawNodes: V1Node[] = data?.nodes;
+
+	let filterLC = $derived(filterValue.toLowerCase());
+	let deployments = $derived(rawDeployments.filter((d) => d.metadata.name.includes(filterLC)));
+	let daemons = $derived(rawDaemons.filter((d) => d.metadata.name.includes(filterLC)));
+	let nodes = $derived(rawNodes.filter((n) => n.metadata.name.includes(filterLC)));
+
+	onMount(() => {
+		window.elements = deployments
+			.map((d) => {
+				return {
+					name: d.metadata?.name || undefined,
+					link: `/cluster/deployment/${d.metadata?.uid}`,
+					...d
+				};
+			})
+			.filter((d) => d.name);
+	});
 </script>
 
 <PageHeader>Cluster overview</PageHeader>
+
+<div class="search-section">
+	<Input label="Filter resources" placeholder="Search by name" bind:value={filterValue} />
+</div>
 
 <details open>
 	<summary>
@@ -65,12 +89,37 @@
 </details>
 
 <style lang="scss">
+	.search-section {
+		padding: 1.714rem 0px;
+		top: 4.5rem;
+		background-color: var(--bg);
+		position: sticky;
+
+		@media screen and (max-width: 480px) {
+			top: 3rem;
+		}
+	}
+
 	.server-list {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 2rem;
+		--grid-tmpl-cols: repeat(1, 1fr);
+		--grid-gap: 0.5rem;
+		grid-template-columns: var(--grid-tmpl-cols, repeat(2, 1fr));
+		gap: var(--grid-gap, 0.5rem);
 
 		margin-bottom: 2rem;
+
+		@media screen and (min-width: 480px) {
+			--grid-tmpl-cols: repeat(2, 1fr);
+		}
+		@media screen and (min-width: 750px) {
+			--grid-tmpl-cols: repeat(2, 1fr);
+			--grid-gap: 1.25rem;
+		}
+		@media screen and (min-width: 1200px) {
+			--grid-tmpl-cols: repeat(3, 1fr);
+			--grid-gap: 2rem;
+		}
 	}
 
 	.server-list.deploys {
@@ -88,7 +137,8 @@
 		cursor: pointer;
 	}
 
-	h2 {
+	:global(.server-list h2) {
 		font-family: 'Reckless Neue';
+		justify-content: unset !important;
 	}
 </style>

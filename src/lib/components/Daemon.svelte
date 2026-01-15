@@ -8,11 +8,12 @@
 
 	const healthy =
 		status?.desiredNumberScheduled && status?.desiredNumberScheduled === status?.numberReady;
+	const daemonUrl = `/cluster/daemonset/${metadata?.uid}`;
 </script>
 
 <div class="card-container">
 	<div class="namespace">
-		<h2>{pods?.length} of {metadata?.name} in {metadata?.namespace}</h2>
+		<h2>{pods?.length} of <a href={daemonUrl}>{metadata?.name}</a> in {metadata?.namespace}</h2>
 	</div>
 
 	<p>heatlthy: {healthy}</p>
@@ -28,7 +29,7 @@
 	.card-container {
 		background-color: #cab2aa40;
 		border-radius: 0.5rem;
-		width: 100%;
+		width: calc(100% - 1.5rem);
 		padding: 0.75rem;
 
 		.namespace {
@@ -38,8 +39,8 @@
 
 		.card-wrapper {
 			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: 2rem;
+			grid-template-columns: var(--grid-tmpl-cols, repeat(3, 1fr));
+			gap: var(--grid-gap, 2rem);
 		}
 	}
 

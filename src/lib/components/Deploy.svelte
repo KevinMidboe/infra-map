@@ -6,11 +6,16 @@
 	export let deploy: V1Deployment;
 
 	let { metadata, pods } = deploy;
+
+	const deploymentUrl = `/cluster/deployment/${metadata?.uid}`;
 </script>
 
 <div class="card-container">
 	<div class="namespace">
-		<h2>{metadata?.name} in {metadata?.namespace}</h2>
+		<h2>
+			<a href={deploymentUrl}>{metadata?.name}</a> in
+			{metadata?.namespace}
+		</h2>
 	</div>
 
 	<div class="card-wrapper">
@@ -34,8 +39,8 @@
 
 		.card-wrapper {
 			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: 2rem;
+			grid-template-columns: var(--grid-tmpl-cols, repeat(3, 1fr));
+			gap: var(--grid-gap, 2rem);
 		}
 	}
 </style>

@@ -1,11 +1,30 @@
 import type { PageServerLoad } from './$types';
 import { fetchP1P } from '$lib/server/homeassistant';
-import { currentFilament } from '$lib/server/filament';
-import type { Entity } from '$lib/interfaces/homeassistant';
+import { getAllFilament } from '$lib/server/database/filament';
 import type { Filament } from '$lib/interfaces/printer';
 
-export const load: PageServerLoad = async (): Promise<{ p1p: Entity[]; filament: Filament[] }> => {
-	const p1p = await fetchP1P();
-	const filament = currentFilament();
+interface PrinterState {
+	[key: string]: {
+		value: string;
+		unit?: string;
+		picture?: string;
+	};
+}
+
+export const load: PageServerLoad = async (): Promise<{
+	p1p: PrinterState;
+	filament: Filament[];
+}> => {
+	let p1p;
+	let filament: Filament[];
+
+	try {
+		p1p = await fetchP1P();
+		filament = await getAllFilament();
+	} catch (error) {
+		console.error('error while fetching printer server props');
+		console.error(error);
+	}
+
 	return { p1p, filament };
 };

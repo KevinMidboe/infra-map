@@ -4,10 +4,17 @@
 </script>
 
 <article class="main-container">
-	<div class="header">
-		<h2>{title}</h2>
-		<label>{description}</label>
-	</div>
+	{#if title || description}
+		<div class="header">
+			<div class="title">
+				<h2>{title}</h2>
+				<slot name="top-left" />
+			</div>
+			{#if description && description?.length > 0}
+				<label>{description}</label>
+			{/if}
+		</div>
+	{/if}
 
 	<slot></slot>
 </article>
@@ -25,5 +32,10 @@
 	.header {
 		display: flex;
 		flex-direction: column;
+
+		.title {
+			display: flex;
+			justify-content: space-between;
+		}
 	}
 </style>

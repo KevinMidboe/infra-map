@@ -1,9 +1,46 @@
 import * as k8s from '@kubernetes/client-node';
 import stream from 'stream';
 import { writable } from 'svelte/store';
+import fs from 'fs';
+import { env } from '$env/dynamic/private';
+
+/*
+const kubeCaPath =
+	env.KUBERNETES_CA_CERT_PATH || '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt';
+const kubeCaCert = fs.readFileSync(kubeCaPath, 'utf8');
+
+// const kubeSaTokenPath =	env.KUBERNETES_SA_TOKEN_PATH || '/var/run/secrets/kubernetes.io/serviceaccount/token';
+const token = fs.readFileSync(kubeSaTokenPath, 'utf8');
+*/
+
+const kubeConfig: k8s.KubeConfig = {
+	clusters: [
+		{
+			name: 'kazan',
+			server: env.KUBERNETES_SERVICE_HOST || 'https://kubernetes.default.svc',
+			// caData: kubeCaCert,
+			// skipTLSVerify: true
+			skipTLSVerify: true
+		}
+	],
+	users: [
+		{
+			name: 'pod-user',
+			token: env.KUBERNETES_SA_TOKEN
+		}
+	],
+	contexts: [
+		{
+			name: 'default-context',
+			user: 'pod-user',
+			cluster: 'kazan'
+		}
+	],
+	currentContext: 'default-context'
+};
 
 const kc = new k8s.KubeConfig();
-kc.loadFromDefault();
+kc.loadFromOptions(kubeConfig);
 
 const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 const appsV1Api = kc.makeApiClient(k8s.AppsV1Api);
@@ -92,12 +129,16 @@ export function createLogStream(podName: string, namespace: string, containerNam
 		});
 
 		console.log('setting logAbortController, prev:', logAbortController);
-		logAbortController = await k8sLog.log(namespace, podName, containerName, liveStream, {
-			follow: true,
-			timestamps: false,
-			pretty: false,
-			tailLines: maxLines
-		});
+		try {
+			logAbortController = await k8sLog.log(namespace, podName, containerName, liveStream, {
+				follow: true,
+				timestamps: false,
+				pretty: false,
+				tailLines: maxLines
+			});
+		} catch (error) {
+			console.log('ERROR SETTING UP WS', error);
+		}
 	}
 
 	function stop() {

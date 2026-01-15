@@ -1,0 +1,12 @@
+import type { PageServerLoad } from './$types';
+import { getFilamentByColor } from '$lib/server/database/filament';
+
+export const load = async ({ params }: Parameters<PageServerLoad>[0]) => {
+	let { id } = params;
+	if (id) {
+		id = id.replaceAll('-', ' ');
+	}
+
+	const filament = await getFilamentByColor(id);
+	return { id, filament: filament };
+};

@@ -11,10 +11,21 @@
 	import { formatBytes, formatDuration } from '$lib/utils/conversion';
 	import type { Node } from '$lib/interfaces/proxmox';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+	import Speed from '$lib/icons/speed.svelte';
+	import Fingerprint from '$lib/icons/fingerprint.svelte';
 
 	export let node: Node;
 
-	const buttons = ['View logs', 'Web terminal', 'graphs'];
+	const buttons = [
+		{ name: 'View logs', link: `https://${node.ip}:8006/#v1:0:=node%2F${node.name}:4:25::::::` },
+		{
+			name: 'Terminal',
+			link: `https://${node.ip}:8006/#v1:0:=node%2F${node.name}:4:=jsconsole::::::`
+		},
+		{ name: 'Graphs', link: `https://${node.ip}:8006/#v1:0:=node%2F${node.name}:4:5::::::` },
+		{ name: 'Details', link: `/servers/node/${node.name}` }
+	];
 
 	let { cpuinfo, memory, uptime, loadavg } = node.info;
 
@@ -22,6 +33,9 @@
 	const vmsTotal = node.vms.filter((v) => v?.template !== 1);
 	const lxcsRunning = node.lxcs.filter((l) => l?.template !== 1 && l.status === 'running');
 	const lxcsTotal = node.lxcs.filter((l) => l?.template !== 1);
+
+	const t = cpuinfo.model.match(/(\w+\(\w+\)) (\w+\(\w+\)) (.*)/);
+	const cpu = t[3].replaceAll('  ', ' ');
 
 	onMount(() => {
 		setInterval(() => (uptime += 1), 1000);
@@ -50,6 +64,18 @@
 		<span
 			>{cpuinfo.cpus} Cores on {cpuinfo.sockets} {cpuinfo.sockets > 1 ? 'Sockets' : 'Socket'}</span
 		>
+
+		<div class="title">
+			<Fingerprint />
+			<span>Model</span>
+		</div>
+		<span>{cpu}</span>
+
+		<div class="title">
+			<Speed />
+			<span>Turbo speed</span>
+		</div>
+		<span>{Math.floor(node.info.cpuinfo.mhz) / 1000} GHz</span>
 
 		<div class="title">
 			<Shield />
@@ -90,170 +116,15 @@
 
 	<div class="footer">
 		{#each buttons as btn (btn)}
-			<button on:click={() => console.log(node)}>
-				<span>{btn}</span>
-			</button>
+			<a href={btn.link} target={btn.link[0] === '/' ? '' : '_blank'} rel="noopener noreferrer">
+				<button>
+					<span>{btn.name}</span>
+				</button>
+			</a>
 		{/each}
 	</div>
 </div>
 
 <style lang="scss">
-	@keyframes pulse-live {
-		0% {
-			box-shadow: 0 0 0 0 rgba(0, 212, 57, 0.7);
-			box-shadow: 0 0 0 0 rgba(0, 212, 57, 0.7);
-		}
-		70% {
-			box-shadow: 0 0 0 10px rgba(0, 212, 57, 0);
-			box-shadow: 0 0 0 10px rgba(0, 212, 57, 0);
-		}
-		100% {
-			box-shadow: 0 0 0 0 rgba(0, 212, 57, 0);
-			box-shadow: 0 0 0 0 rgba(0, 212, 57, 0);
-		}
-	}
-
-	@mixin pulse-dot {
-		&::after {
-			content: '';
-			top: 50%;
-			margin-left: 0.4rem;
-			position: absolute;
-			display: block;
-			border-radius: 50%;
-			background-color: var(--color);
-			border-radius: 50%;
-			transform: translate(-50%, -50%);
-			animation: pulse-live 2s infinite;
-			height: 16px;
-			width: 16px;
-		}
-	}
-	.card {
-		background: #fbf6f4;
-		box-shadow: var(
-			--str-shadow-s,
-			0px 0px 2px #22242714,
-			0px 1px 4px #2224271f,
-			0px 4px 8px #22242729
-		);
-		pointer-events: all;
-		cursor: auto;
-	}
-
-	.header {
-		display: flex;
-		padding: 0.75rem;
-		background-color: white;
-		align-items: center;
-		font-size: 16px;
-
-		.icon {
-			height: 24px;
-			width: 24px;
-			margin-right: 0.75rem;
-		}
-
-		.status {
-			height: 1rem;
-			width: 1rem;
-			border-radius: 50%;
-			margin-left: auto;
-			position: relative;
-
-			&.ok {
-				--color: var(--positive);
-				@include pulse-dot;
-			}
-			&.warning {
-				background-color: var(--warning);
-			}
-			&.error {
-				background-color: var(--negative);
-			}
-		}
-	}
-
-	.footer {
-		padding: 0.5rem;
-		background-color: white;
-	}
-
-	.resource {
-		display: grid;
-		grid-template-columns: auto auto;
-		padding: 0.5rem;
-		background-color: var(--bg);
-
-		row-gap: 6px;
-		column-gap: 20px;
-
-		> div,
-		span {
-			display: flex;
-			padding: 0 0.5rem;
-		}
-	}
-
-	:global(.resource .title svg) {
-		height: 1rem;
-		width: 1rem;
-	}
-
-	.footer {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-
-		margin-top: auto;
-		background: white;
-		padding: 0.5rem;
-		border-bottom-left-radius: 0.25rem;
-		border-bottom-right-radius: 0.25rem;
-
-		button {
-			border: none;
-			position: relative;
-			background: transparent;
-			height: unset;
-			border-radius: 0.5rem;
-			display: inline-block;
-			text-decoration: none;
-			padding: 0 0.5rem;
-			flex: 1;
-
-			span {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				width: 100%;
-				height: 1.5rem;
-				padding: 0 0.5rem;
-				margin-left: -0.5rem;
-				border: 1px solid #eaddd5;
-				border-radius: inherit;
-				white-space: nowrap;
-				cursor: pointer;
-				font-weight: 700;
-			}
-
-			&::after {
-				content: '';
-				position: absolute;
-				right: 0;
-				top: 0;
-				border-radius: 0.5rem;
-				width: 100%;
-				height: 100%;
-				transition: transform 0.1s ease;
-				will-change: box-shadow 0.25s;
-				pointer-events: none;
-			}
-		}
-	}
-
-	.positive {
-		color: #077c35;
-	}
+	@import '../styles/card.scss';
 </style>

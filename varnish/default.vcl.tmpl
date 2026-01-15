@@ -1,0 +1,145 @@
+vcl 4.0;
+
+import std;
+import digest;
+import directors;
+
+include "includes/x-cache-header.vcl";
+include "vcl_deliver.vcl";
+
+# Define backend pointing to Home Assistant IP
+backend hass_backend {
+    .host = "{{ getenv `IMAGE_HOST` `homeassistant.local` }}";
+    .port = "8123";
+}
+
+backend app_frontend {
+    .host = "{{ getenv `PROXY_HOST` `localhost` }}";
+    .port = "3000";
+}
+
+sub vcl_recv {
+    set req.backend_hint = app_frontend;
+
+    # Handle CORS preflight
+    if (req.method == "OPTIONS") {
+        return (synth(204, "Preflight"));
+    }
+
+    # Rewrite image URL
+    if (req.url ~ "^/image-proxy/?") {
+        # Extract everything after /image-proxy/ and store it
+        set req.http.X-Image-URL = regsub(req.url, "^/image-proxy/(.*)", "\1");
+
+        # Rewrite req.url to match backend expectations
+        set req.url = regsub(req.http.X-Image-URL, "^http://[^/]+", "");
+
+        set req.backend_hint = hass_backend;
+    }
+
+    # Enable debug headers through query param
+    if (req.url ~ "(?i)debug=(true|yes|1)") {
+      set req.http.X-debug = true;
+    }
+
+    # Remove cookies so content is cacheable
+    unset req.http.Cookie;
+}
+
+sub vcl_synth {
+    if (resp.status == 204) {
+        set resp.http.Access-Control-Allow-Origin = "*";
+        set resp.http.Access-Control-Allow-Methods = "GET, OPTIONS";
+        set resp.http.Access-Control-Allow-Headers = "Content-Type, X-Cache-ID";
+        set resp.http.Content-Length = "0";
+        return (deliver);
+    }
+
+    if (resp.status == 304) {
+        set resp.http.ETag = req.http.If-None-Match;
+        set resp.http.Content-Length = "0";
+        return (deliver);
+    }
+}
+
+sub vcl_backend_response {
+    ###################
+    #   cache rules   #
+    ###################
+    # HTML pages → short cache or no cache
+    if (bereq.url ~ "\.html$") {
+        set beresp.ttl = 30s;         # Cache briefly
+        set beresp.uncacheable = true; # Or disable cache entirely
+    }
+
+    # JavaScript & CSS → long cache
+    if (bereq.url ~ "\.(js|css)$") {
+        set beresp.ttl = 1d;
+    }
+
+    # Images under /image/ → long cache
+    if (bereq.url ~ "^/images/.*\.(svg|png|jpe?g)$") {
+        set beresp.ttl = 1y;
+    }
+
+    # Favicons → long cache
+    if (bereq.url ~ "^/favicons/") {
+        set beresp.ttl = 1y;
+    }
+
+    # Fallback: ensure some cache
+    if (beresp.ttl <= 0s) {
+        set beresp.ttl = 22s;
+    }
+
+    set beresp.http.X-TTL = beresp.ttl;
+
+    ####################
+    #   camera proxy   #
+    ####################
+    if (bereq.url ~ "^/api/camera_proxy/") {
+      set beresp.ttl = 0.3s;
+      set beresp.grace = 60s;
+      set beresp.keep = 60s;
+
+      # Ensure ETag is passed to client
+      if (beresp.http.ETag) {
+          set beresp.http.X-Cache-ETag = beresp.http.ETag;
+      } else {
+          # Optional: generate one if not provided
+          # set beresp.http.ETag = digest.hash_md5(beresp.body);
+          set beresp.http.ETag = beresp.http.Content-Length;
+          set beresp.http.X-Cache-ETag = beresp.http.ETag;
+      }
+    }
+
+    ########################
+    #   gzip compression   #
+    ########################
+    if (beresp.http.Content-Type ~ "^(text/|application/json|application/javascript|application/x-javascript|application/xml|application/xhtml+xml|image/svg\+xml)") {
+        set beresp.do_gzip = true;
+    }
+
+  return (deliver);
+}
+
+sub vcl_hit {
+    if (obj.ttl < 0s && std.healthy(req.backend_hint)) {
+        return (deliver);
+    }
+}
+
+sub vcl_deliver {
+    unset resp.http.X-Image-URL;
+    set resp.http.Access-Control-Allow-Origin = "*";
+
+    # Handle conditional request with ETag
+    if (
+        req.http.If-None-Match &&
+        req.http.If-None-Match == resp.http.ETag
+    ) {
+        return (synth(304));
+    }
+
+    return (deliver);
+}

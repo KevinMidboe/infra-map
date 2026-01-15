@@ -1,4 +1,10 @@
 @font-face {
+	font-family: 'Reckless Neue';
+	font-style: normal;
+	src: url('/fonts/RecklessNeue-Regular.woff2') format('woff2');
+}
+
+@font-face {
 	font-family: 'Inter';
 	font-style: normal;
 	src: url('/fonts/Inter.woff2') format('woff2');
@@ -6,17 +12,90 @@
 	font-style: normal;
 }
 
-:root {
+@font-face {
+	font-family: 'Stop';
+	font-style: normal;
+	src: url('/fonts/StopSN-Display.woff2') format('woff2');
+	font-weight: 100 900;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Norman';
+	font-style: normal;
+	src: url('/fonts/NormanVariable-Regular.woff2') format('woff2');
+	font-weight: 100 900;
+	font-style: normal;
+}
+
+:root,
+.light {
+	color-scheme: light;
 	--bg: #f9f5f3;
 	--color: #1c1819;
 	--highlight: #eaddd5;
+	--theme: #32292b;
 
 	--positive: #00d439;
 	--negative: #ff5449;
 	--warning: #ffa312;
+	--pulse-positive: rgba(0, 212, 57, 0.7);
+	--pulse-negative: rgba(255, 84, 73, 0.7);
+	--pulse-warning: rgba(255, 163, 18, 0.7);
 
 	--border: 1px solid #eaddd5;
 	--border-radius: 0.75rem;
+
+	--card-bg: rgba(255, 255, 255, 0.7);
+	--key: #6e80d6;
+	--muted: #7a6d6e;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		color-scheme: light dark;
+		--bg: #121010;
+		--color: #f4eeeb;
+		--highlight: #2b2325;
+		--theme: #eaddd5;
+
+		--positive: #3ddc84;
+		--negative: #ff6b63;
+		--warning: #ffb74d;
+		--pulse-positive: rgba(61, 220, 132, 0.6);
+		--pulse-negative: rgba(255, 107, 99, 0.6);
+		--pulse-warning: rgba(255, 183, 77, 0.6);
+
+		--border: 1px solid #2b2325;
+
+		--key: #9fb3ff;
+		--muted: #b0b0b0;
+		--card-bg: #303037;
+	}
+}
+
+body.dark {
+	--bg: #121010;
+	--color: #f4eeeb;
+	--highlight: #2b2325;
+	--theme: #eaddd5;
+
+	--positive: #3ddc84;
+	--negative: #ff6b63;
+	--warning: #ffb74d;
+	--pulse-positive: rgba(61, 220, 132, 0.6);
+	--pulse-negative: rgba(255, 107, 99, 0.6);
+	--pulse-warning: rgba(255, 183, 77, 0.6);
+
+	--border: 1px solid #2b2325;
+
+	--key: #9fb3ff;
+	--muted: #b0b0b0;
+	--card-bg: #303037;
+}
+
+svg {
+	fill: var(--color);
 }
 
 body {
@@ -28,6 +107,9 @@ body {
 	background-color: var(--bg);
 	color: var(--color);
 	font-size: 14px;
+	transition:
+		background 0.3s ease,
+		color 0.3s ease;
 }
 
 a,
@@ -37,7 +119,11 @@ a:visited {
 }
 
 h1 {
-	font-family: 'Reckless Neue';
+	font-family: 'Stop', 'Reckless Neue';
+	font-family: 'Norman', 'Reckless Neue';
+	letter-spacing: 2.2px;
+	font-weight: bold !important;
+	color: var(--theme);
 }
 
 h2 {
@@ -69,27 +155,62 @@ button {
 	border: none;
 	position: relative;
 	background: transparent;
-	height: unset;
+	color: var(--color);
+	height: 100%;
 	border-radius: 0.5rem;
 	display: inline-block;
 	text-decoration: none;
+	cursor: pointer;
 	padding: 0 0.5rem;
 	flex: 1;
 }
+
 button span {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	width: 100%;
-	height: 1.5rem;
+	height: 100%;
+	min-height: 1.5rem;
 	padding: 0 0.5rem;
 	margin-left: -0.5rem;
 	border: 1px solid #eaddd5;
 	border-radius: inherit;
 	white-space: nowrap;
-	cursor: pointer;
 	font-weight: 700;
 	transition: all ease-in-out 0.2s;
+	background-color: white;
+}
+
+button.affirmative span {
+	background-color: var(--theme);
+	color: white;
+	font-style: italic;
+}
+
+button.affirmative:hover span {
+	color: var(--theme);
+	border-color: var(--theme);
+	background-color: var(--highlight);
+}
+
+/* dark mode button overrides */
+body.dark button span {
+	background-color: var(--theme);
+	color: var(--bg);
+}
+body.dark button.affirmative span {
+	color: var(--bg);
+}
+
+body.dark button.affirmative:hover span {
+	color: var(--color);
+	background-color: var(--highlight);
+	border-color: var(--bg);
+}
+
+button:disabled {
+	cursor: not-allowed;
 }
 
 button::after {
@@ -107,7 +228,49 @@ button::after {
 
 button:hover span {
 	border-color: #cab2aa;
-	background: #f9f5f3 !important;
+	background: #f9f5f3;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-family: sans-serif;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+table th,
+table td {
+	padding: 12px;
+	text-align: left;
+	transition: background-color 0.25s;
+}
+
+table th {
+	font-weight: 500;
+	font-family: 'Inter', sans-serif;
+	font-size: 14px;
+	font-stretch: 2px;
+	border-bottom: 1px solid #eaddd5;
+}
+
+table td {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	display: table-cell;
+}
+
+table tr:not(table tr:last-of-type) {
+	border-bottom: 1px solid #eaddd5;
+}
+
+table tr:hover > td {
+	background-color: var(--highlight);
+	background-color: var(--bg);
+}
+
+table tr.link {
+	cursor: pointer;
 }
 
 .main-container {
@@ -116,6 +279,14 @@ button:hover span {
 	border: var(--border);
 	border-radius: var(--border-radius, 1rem);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+	@media screen and (max-width: 750px) {
+		padding: 0.5rem;
+	}
+}
+
+body.dark .main-container {
+	background: var(--highlight) !important;
 }
 
 .section-wrapper {
@@ -126,7 +297,9 @@ button:hover span {
 
 .section-row {
 	display: flex;
-	gap: 2rem;
+	flex-wrap: wrap;
+	column-gap: 2rem;
+	row-gap: 1rem;
 }
 
 .section-element {

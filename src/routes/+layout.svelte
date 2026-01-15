@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
+	import DarkmodeToggle from '$lib/components/DarkmodeToggle.svelte';
+	import GlobalSearch from '$lib/components/GlobalSearch.svelte';
 </script>
 
 <div class="page">
@@ -13,6 +15,9 @@
 			<slot></slot>
 		</main>
 	</div>
+
+	<DarkmodeToggle />
+	<GlobalSearch />
 </div>
 
 <style lang="scss">
@@ -30,8 +35,17 @@
 
 		main {
 			/* mobile: 1rem */
-			margin: 2rem;
-			width: 100%;
+			--margin: 2rem;
+			margin: var(--margin);
+			width: calc(100% - var(--margin) * 2);
+		}
+
+		@media screen and (max-width: 750px) {
+			padding-top: 0;
+
+			main {
+				--margin: 1rem;
+			}
 		}
 	}
 </style>

@@ -12,7 +12,7 @@ spec:
         paths:
           - backend:
               service:
-                name: infra-map-service
+                name: varnish
                 port:
                   number: 80
             path: /

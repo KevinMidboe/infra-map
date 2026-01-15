@@ -2,84 +2,84 @@ import type { Filament } from '$lib/interfaces/printer';
 
 const filament: Filament[] = [
 	{
-		Hex: '#DD4344',
-		Color: 'Scarlet Red',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 2,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742848731'
+		hex: '#DD4344',
+		color: 'Scarlet Red',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 2,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742848731'
 	},
 	{
-		Hex: '#61C57F',
-		Color: 'Grass Green',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 2,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742783195'
+		hex: '#61C57F',
+		color: 'Grass Green',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 2,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742783195'
 	},
 	{
-		Hex: '#F7DA5A',
-		Color: 'Lemon Yellow',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 2,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742717659'
+		hex: '#F7DA5A',
+		color: 'Lemon Yellow',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 2,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742717659'
 	},
 	{
-		Hex: '#E8DBB7',
-		Color: 'Desert Tan',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 1,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=48612736401756'
+		hex: '#E8DBB7',
+		color: 'Desert Tan',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 1,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=48612736401756'
 	},
 	{
-		Hex: "url('https://www.transparenttextures.com/patterns/asfalt-dark.png'",
-		Color: 'White Marble',
-		Material: 'PLA Marble',
-		Weight: '1kg',
-		Count: 1,
-		Link: 'https://eu.store.bambulab.com/en-no/products/pla-marble?variant=43964050964699'
+		hex: "url('https://www.transparenttextures.com/patterns/asfalt-dark.png'",
+		color: 'White Marble',
+		material: 'PLA Marble',
+		weight: 1,
+		count: 1,
+		link: 'https://eu.store.bambulab.com/en-no/products/pla-marble?variant=43964050964699'
 	},
 	{
-		Hex: '#0078C0',
-		Color: 'Marine Blue',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 1,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996751073499'
+		hex: '#0078C0',
+		color: 'Marine Blue',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 1,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996751073499'
 	},
 	{
-		Hex: '#000000',
-		Color: 'Charcoal',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 2,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742750427'
+		hex: '#000000',
+		color: 'Charcoal',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 2,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742750427'
 	},
 	{
-		Hex: '#ffffff',
-		Color: 'Ivory White',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 2,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742586587'
+		hex: '#ffffff',
+		color: 'Ivory White',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 2,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742586587'
 	},
 	{
-		Hex: '#E8AFCE',
-		Color: 'Sakura Pink',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 1,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742684891'
+		hex: '#E8AFCE',
+		color: 'Sakura Pink',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 1,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742684891'
 	},
 	{
-		Hex: '#AE96D5',
-		Color: 'Lilac Purple',
-		Material: 'PLA Matte',
-		Weight: '1kg',
-		Count: 1,
-		Link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742914267'
+		hex: '#AE96D5',
+		color: 'Lilac Purple',
+		material: 'PLA Matte',
+		weight: 1,
+		count: 1,
+		link: 'https://eu.store.bambulab.com/en-no/collections/pla/products/pla-matte?variant=42996742914267'
 	}
 ];
 

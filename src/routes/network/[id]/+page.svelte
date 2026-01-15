@@ -1,5 +1,6 @@
 <script lang="ts">
 	import PageHeader from '$lib/components/PageHeader.svelte';
+	import JsonViewer from '$lib/components/JsonViewer.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -9,7 +10,4 @@
 
 <PageHeader>Network: {router.service}</PageHeader>
 
-<div>
-	<p>router:</p>
-	<pre><code>{JSON.stringify(router, null, 2)}</code></pre>
-</div>
+<JsonViewer json={router} />

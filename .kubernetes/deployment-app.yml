@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: infra-map
+  name: infra-map
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: infra-map
+  template:
+    metadata:
+      labels:
+        app: infra-map
+    spec:
+      containers:
+        - name: infra-map
+          image: ${IMAGE}
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 300m
+              memory: 828Mi
+            requests:
+              cpu: 250m
+              memory: 64Mi
+          env:
+            - name: ORIGIN
+              value: http://infra-map.infra-map.svc.cluster.local:3000
+            - name: PROTOCOL_HEADER
+              value: x-forwarded-proto
+            - name: HOST_HEADER
+              value: x-forwarded-host
+            - name: PORT_HEADER
+              value: x-forwarded-port
+            - name: ENV
+              value: production
+          envFrom:
+            - secretRef:
+                name: secret-env-values
+      imagePullSecrets:
+        - name: ghcr-login-secret
